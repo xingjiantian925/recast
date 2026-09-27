@@ -781,6 +781,7 @@ export default {
       action:
         'Please contact one of the numbers below, or someone you trust, or your doctor. If you are willing, you can also bring what you wrote to a professional when it is convenient.',
     },
+    continueLabel: 'Continue using',
     // [REVIEW] Region-specific. 988 covers the US, 116 123 covers the UK and Ireland,
     // findahelpline.com covers the rest. Review before release.
     resources: [

@@ -87,6 +87,11 @@ async function exportText() {
         {{ t('support.toSafety') }}
       </RouterLink>
     </div>
+
+    <RouterLink to="/" class="btn btn-dark btn-lg btn-block" style="margin-top: var(--space-5); text-decoration: none">
+      {{ t('crisis.continueLabel') }}
+      <Icon name="arrow-right" :size="16" class="btn-icon" />
+    </RouterLink>
   </main>
 </template>
 

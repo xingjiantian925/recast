@@ -113,6 +113,9 @@ a:hover { text-decoration: underline; }
 .btn-tertiary:hover { background: var(--muted); }
 .btn-danger { background: var(--color-error); color: var(--primary-foreground); }
 .btn-danger:hover { filter: brightness(.92); }
+.btn-dark { background: var(--foreground); color: var(--background); font-weight: 600; }
+.btn-dark:hover { opacity: .88; }
+.btn-dark:active { opacity: .8; }
 .btn-sm { height: var(--size-button-sm); min-width: var(--size-button-sm); padding: 0 var(--space-3); font-size: var(--font-size-caption); }
 .btn-sm .btn-icon { width: 14px; height: 14px; }
 .btn-lg { height: var(--size-button-lg); padding: 0 var(--space-5); }

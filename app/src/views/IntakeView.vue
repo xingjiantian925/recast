@@ -112,9 +112,15 @@ function proceed() {
             {{ t('intake.crisisChannelNote') }}
           </p>
         </div>
-        <RouterLink to="/support" class="btn btn-secondary" style="text-decoration: none">
-          {{ t('intake.crisisSupportLink') }}
-        </RouterLink>
+        <div class="stack">
+          <RouterLink to="/" class="btn btn-dark btn-lg btn-block" style="text-decoration: none">
+            {{ t('crisis.continueLabel') }}
+            <Icon name="arrow-right" :size="16" class="btn-icon" />
+          </RouterLink>
+          <RouterLink to="/support" class="btn btn-secondary btn-block" style="text-decoration: none">
+            {{ t('intake.crisisSupportLink') }}
+          </RouterLink>
+        </div>
       </div>
 
       <div v-else class="stack">

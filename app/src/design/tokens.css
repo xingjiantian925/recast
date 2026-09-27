@@ -1,0 +1,223 @@
+/*
+ * tokens.css — 令牌层
+ * 来源：设计系统 `蟹壳青 · 瓦灰（田行健）` → colors_and_type.css（原样保留全部变量）
+ * 仅做两处本地化改动，已在下方标注 [Recast]：
+ *   1. 字体栈：Latin 字面在前、CJK 回退在后（默认语言为英文，中文可选）；
+ *      Noto 系列走 Google Fonts，国内网络常不可达，系统回退必须保留
+ *   2. 追加书写区专用字号令牌（原系统面向数据密集界面，正文 15px 不适合长文书写）
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* @group-priority: primary, accent, success, warning, info */
+
+:root {
+  /* primary */
+  --txj-primary-50: #eef2ee;
+  --txj-primary-100: #d7e0d8;
+  --txj-primary-200: #b3c4b6;
+  --txj-primary-300: #8aa78f;
+  --txj-primary-400: #6a8b70;
+  --txj-primary-500: #55735b;
+  --txj-primary-600: #4a6b5c; /* @primary */
+  --txj-primary-700: #3d5649;
+  --txj-primary-800: #2f4239;
+  --txj-primary-900: #22302a;
+
+  /* accent */
+  --txj-accent-50: #f5efe2;
+  --txj-accent-100: #ecdcbd;
+  --txj-accent-200: #dcb786;
+  --txj-accent-300: #c89756;
+  --txj-accent-400: #b07e3a;
+  --txj-accent-500: #97662b; /* @primary */
+  --txj-accent-600: #7e5322;
+  --txj-accent-700: #65421c;
+  --txj-accent-800: #4d3216;
+  --txj-accent-900: #36220f;
+
+  /* success */
+  --txj-success-50: #eef3ea;
+  --txj-success-100: #d7e3cd;
+  --txj-success-200: #b2c8a1;
+  --txj-success-300: #88aa76;
+  --txj-success-400: #6b8f56;
+  --txj-success-500: #557641; /* @primary */
+  --txj-success-600: #436133;
+  --txj-success-700: #354d29;
+  --txj-success-800: #283a1f;
+  --txj-success-900: #1c2815;
+
+  /* warning */
+  --txj-warning-50: #f5ede0;
+  --txj-warning-100: #ecd5b8;
+  --txj-warning-200: #dcb483;
+  --txj-warning-300: #c89254;
+  --txj-warning-400: #b07a35;
+  --txj-warning-500: #966426; /* @primary */
+  --txj-warning-600: #7d501e;
+  --txj-warning-700: #643e18;
+  --txj-warning-800: #4c2e11;
+  --txj-warning-900: #351f0b;
+
+  /* info */
+  --txj-info-50: #e9eef0;
+  --txj-info-100: #cad8dd;
+  --txj-info-200: #94b3bd;
+  --txj-info-300: #5f8d9c;
+  --txj-info-400: #3e7181;
+  --txj-info-500: #2c5865; /* @primary */
+  --txj-info-600: #234753;
+  --txj-info-700: #1c3843;
+  --txj-info-800: #142a32;
+  --txj-info-900: #0d1b21;
+
+  /* error */
+  --txj-error-50: #f3e6e6;
+  --txj-error-100: #e3c5c5;
+  --txj-error-200: #c98b8b;
+  --txj-error-300: #b05c5c;
+  --txj-error-400: #8e3838;
+  --txj-error-500: #6f2727; /* @primary */
+  --txj-error-600: #5a1e1e;
+  --txj-error-700: #461818;
+  --txj-error-800: #321010;
+  --txj-error-900: #1f0909;
+
+  /* neutral */
+  --txj-neutral-50: #f4f3ee;
+  --txj-neutral-100: #e6e3da;
+  --txj-neutral-200: #d2cdbf;
+  --txj-neutral-300: #b3ab98;
+  --txj-neutral-400: #8e8470;
+  --txj-neutral-500: #736a57; /* @primary */
+  --txj-neutral-600: #5a5343;
+  --txj-neutral-700: #454035;
+  --txj-neutral-800: #322f27;
+  --txj-neutral-900: #211f1a;
+
+  /* text */
+  --foreground: #211f1a;
+  --muted-foreground: #5a5343;
+  --text-primary: var(--foreground);
+  --text-muted: var(--muted-foreground);
+
+  /* surface */
+  --background: #f4f3ee;
+  --surface: #ffffff;
+  --card: #fbfaf6;
+  --popover: #ffffff;
+  --muted: #e6e3da;
+  --bg-surface: var(--surface);
+  --bg-muted: var(--muted);
+  --border-subtle: #e6e3da;
+  --border-default: #d2cdbf;
+
+  /* aliases */
+  --primary: var(--txj-primary-600);
+  --primary-foreground: #fbfaf6;
+  --accent: var(--txj-accent-500);
+  --ring: var(--txj-primary-600);
+  --color-primary: var(--txj-primary-600);
+  --color-accent: var(--txj-accent-500);
+  --color-success: var(--txj-success-500);
+  --color-warning: var(--txj-warning-500);
+  --color-error: var(--txj-error-500);
+  --color-info: var(--txj-info-500);
+
+  /* === Typography === */
+  /* [Recast] Latin 字面在前、CJK 回退在后（默认语言为英文）；Latin 系统字面自带，
+     因此即使 Google Fonts 不可达，英文侧仍有衬线/无衬线回退可用 */
+  --font-display: 'Noto Serif', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-heading: 'Noto Serif', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-body: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-size-display: 48px;
+  --font-size-h1: 36px;
+  --font-size-h2: 28px;
+  --font-size-h3: 22px;
+  --font-size-h4: 18px;
+  --font-size-body: 15px;
+  --font-size-lead: 17px;
+  --font-size-caption: 12px;
+  --font-size-mono: 13px;
+  --font-weight-display: 700;
+  --font-weight-h1: 700;
+  --font-weight-h2: 600;
+  --font-weight-h3: 600;
+  --font-weight-h4: 600;
+  --font-weight-body: 400;
+  --font-weight-lead: 400;
+  --font-weight-caption: 400;
+  --font-weight-mono: 400;
+  --line-height-display: 1.15;
+  --line-height-h1: 1.25;
+  --line-height-h2: 1.3;
+  --line-height-h3: 1.4;
+  --line-height-h4: 1.45;
+  --line-height-body: 1.6;
+  --line-height-lead: 1.7;
+  --line-height-caption: 1.5;
+  --line-height-mono: 1.6;
+
+  /* === Spacing（4px 基单位，沿用原系统） === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px; /* [Recast] 书写界面需要更大留白 */
+
+  /* === Sizing === */
+  --size-button-sm: 28px;
+  --size-button-md: 36px;
+  --size-button-lg: 44px;
+  --size-input: 36px;
+  --size-icon-sm: 16px;
+  --size-icon-md: 20px;
+  --size-icon-lg: 24px;
+
+  /* === Radius === */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+
+  /* === Shadows（暖墨基底，非纯黑） === */
+  --shadow-1: 0 1px 2px rgba(33,31,26,.06), 0 1px 1px rgba(33,31,26,.04);
+  --shadow-2: 0 4px 8px -2px rgba(33,31,26,.10);
+  --shadow-3: 0 8px 24px -8px rgba(33,31,26,.18);
+  --shadow-4: 0 16px 40px -12px rgba(33,31,26,.24);
+  --shadow-5: 0 24px 60px -20px rgba(33,31,26,.30);
+
+  /* === [Recast] 书写层令牌（原系统无此层，为长文书写补） === */
+  --font-size-writing: 19px;
+  --line-height-writing: 1.95;
+  --writing-measure: 62ch;
+}
+
+/* 深色模式令牌（原系统标注为推断产物，未实测渲染；此处保留待验证） */
+.dark {
+  --background: #211f1a;
+  --surface: #2a2722;
+  --card: #322f27;
+  --popover: #2a2722;
+  --muted: #322f27;
+  --foreground: #f4f3ee;
+  --muted-foreground: #b3ab98;
+  --border-subtle: #322f27;
+  --border-default: #454035;
+  --bg-surface: var(--surface);
+  --bg-muted: var(--muted);
+  --text-primary: var(--foreground);
+  --text-muted: var(--muted-foreground);
+  --primary: var(--txj-primary-400);
+  --color-primary: var(--txj-primary-400);
+  --accent: var(--txj-accent-400);
+  --color-accent: var(--txj-accent-400);
+  --ring: var(--txj-primary-400);
+  --primary-foreground: #211f1a;
+}

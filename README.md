@@ -53,7 +53,20 @@ Ayduk & Kross (2010) · Kross & Ayduk (2009) · Kross et al. (2012) · Trope & L
 
 ## Status
 
-Early design stage. **No code yet** — this repository holds the vision, not the build.
+**Phase 1 — web, running.** The full Step 0–10 flow works in the browser: intake, first-person writing, intensity routing, viewpoint selection, a rewrite that must pass a five-criterion gate before it counts as a rewrite, the narrative archive, and the week 2 / 4 / 8 check-in.
+
+The rewrite engine is **stubbed** — it returns fixed sample output so the flow and the gate can be exercised end to end. Where the model runs is still open, and it is deliberately left open here.
+
+```bash
+cd app && npm install && npm run dev
+```
+
+## Roadmap
+
+| Phase | Scope | State |
+|---|---|---|
+| 1 | Web app — full Step 0–10 flow, stubbed rewrite engine | Running locally |
+| 2 | macOS desktop app (Tauri) — local encrypted storage | Planned |
 
 Design notes live alongside the theory. The one-page version of this README is [`index.html`](index.html) — open it in a browser.
 

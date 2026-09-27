@@ -118,6 +118,33 @@ export default {
     noEventEyebrow: 'No event this week · doing nothing is also allowed',
     noEventNote:
       'If it has been a long time since you used this, that is not a state to be corrected. The goal of this tool is for you to need it less and less.',
+    why: {
+      eyebrow: 'Why it works · the short version',
+      title: 'Why this method helps — and why it can prevent',
+      lead: 'A memory gets less hot when you read it back in the third person. What does the work is not the pronoun but the reconstruction of meaning — and interrupted rumination is where prevention begins.',
+      points: [
+        {
+          claim:
+            'Self-distancing lowers the emotional and physiological charge of a memory — most of all in the people who carry the most.',
+          cite: 'Kross & Ayduk (2009) · Kross et al. (2012) · Résibois et al. (2018)',
+        },
+        {
+          claim:
+            'The active ingredient is reconstructing meaning, not swapping pronouns: the pronoun alone is a small effect and does not move symptoms.',
+          cite: 'Kross et al. (2012) · Nook et al. (2022)',
+        },
+        {
+          claim:
+            'Prevention is the strongest claim the evidence supports: prevention programs cut new cases of depression by about 21%, while expressive writing on its own has a small effect.',
+          cite: 'van Zoonen et al. (2014) · Frattaroli (2006)',
+        },
+      ],
+      boundary:
+        'One negative result shaped this product: unguided, daily third-person writing raised symptoms in a high-risk group — which is why Recast caps the dose and schedules check-ins.',
+      boundaryCite: 'Giovanetti et al. (2019)',
+      disclaimer:
+        'No trial has tested LLM-based third-person rewriting as an intervention. The evidence supports the mechanism (self-distancing plus reconstruction), not this specific tool. Recast is a clarity tool, not a treatment.',
+    },
   },
 
   intake: {

@@ -88,6 +88,12 @@ const checkinMustWeek2 = computed(() => Boolean(TIER_INFO.value[session.tier]?.m
 
 /** 归档条目里存的是视角 id，展示时要按当前语言取名字 */
 const lensName = (id) => LENSES.value.find((l) => l.id === id)?.name || id
+
+/** 「为什么有效 / 为什么能预防」依据：纯数据数组经 tm() 取，随语言切换重算 */
+const whyPoints = computed(() => {
+  const list = tm('home.why.points')
+  return Array.isArray(list) ? list : []
+})
 </script>
 
 <template>
@@ -249,6 +255,27 @@ const lensName = (id) => LENSES.value.find((l) => l.id === id)?.name || id
         </div>
       </section>
 
+      <!-- 为什么有效 / 为什么能预防：方法依据（带引用），简洁可读 -->
+      <section class="why" style="margin-top: var(--space-7)">
+        <p class="t-eyebrow">{{ t('home.why.eyebrow') }}</p>
+        <h2 class="t-h3" style="margin-top: var(--space-2)">{{ t('home.why.title') }}</h2>
+        <p class="why__lead">{{ t('home.why.lead') }}</p>
+
+        <ul class="why__list">
+          <li v-for="(p, i) in whyPoints" :key="i" class="why__item">
+            <p class="why__claim">{{ p.claim }}</p>
+            <p class="why__cite">{{ p.cite }}</p>
+          </li>
+        </ul>
+
+        <div class="why__boundary">
+          <p class="why__claim">{{ t('home.why.boundary') }}</p>
+          <p class="why__cite">{{ t('home.why.boundaryCite') }}</p>
+        </div>
+
+        <p class="why__disclaimer">{{ t('home.why.disclaimer') }}</p>
+      </section>
+
       <!-- 无事件时的路径：不推"你该写了" -->
       <section style="margin-top: var(--space-7)">
         <p class="t-eyebrow" style="margin-bottom: var(--space-3)">{{ t('home.noEventEyebrow') }}</p>
@@ -382,5 +409,59 @@ const lensName = (id) => LENSES.value.find((l) => l.id === id)?.name || id
   color: var(--muted-foreground);
   font-size: 14.5px;
   line-height: 1.75;
+}
+
+/* 「为什么有效」依据块：与 ScienceNote 的引用样式保持一致的克制风格 */
+.why {
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.why__lead {
+  margin-top: var(--space-3);
+  max-width: 660px;
+  color: var(--muted-foreground);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.why__list {
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.why__item {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+.why__item:first-child { padding-top: 0; border-top: 0; }
+.why__claim {
+  margin: 0 0 var(--space-1);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.why__cite {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, monospace);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+.why__boundary {
+  margin-top: var(--space-4);
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--color-warning, #d97706);
+}
+.why__disclaimer {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.7;
+  opacity: 0.75;
 }
 </style>

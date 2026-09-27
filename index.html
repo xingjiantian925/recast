@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Recast — Write it as yourself. Read it as someone else.</title>
+<meta name="description" content="Recast turns first-person emotional writing into a third-person account, so you can see what you feel instead of circling it." />
+<style>
+  :root {
+    --bg: #080c18;
+    --bg-2: #0d1226;
+    --panel: rgba(255, 255, 255, 0.04);
+    --line: rgba(255, 255, 255, 0.09);
+    --ink: #eef1fa;
+    --ink-dim: #98a2c6;
+    --ink-faint: #626d94;
+    --a1: #7aa2ff;
+    --a2: #b98bff;
+    --grad: linear-gradient(96deg, var(--a1), var(--a2));
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --maxw: 860px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ambient background */
+  .aura {
+    position: fixed;
+    inset: -20% -20% auto -20%;
+    height: 120vh;
+    background:
+      radial-gradient(38% 42% at 50% 18%, rgba(122, 162, 255, 0.20), transparent 70%),
+      radial-gradient(30% 34% at 78% 42%, rgba(185, 139, 255, 0.14), transparent 70%);
+    filter: blur(10px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    background-size: 76px 76px;
+    mask-image: radial-gradient(64% 52% at 50% 26%, #000 20%, transparent 78%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; }
+
+  /* nav */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 26px 28px;
+  }
+  .brand {
+    font-weight: 700;
+    letter-spacing: 0.34em;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  header nav a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 13.5px;
+    margin-left: 22px;
+    transition: color 0.25s;
+  }
+  header nav a:hover { color: var(--ink); }
+
+  /* hero */
+  .hero {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 74px 28px 96px;
+    text-align: center;
+  }
+  .swap {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  .said {
+    position: relative;
+    color: var(--ink-faint);
+  }
+  .said::after {
+    content: "";
+    position: absolute;
+    left: -14%;
+    top: 52%;
+    width: 128%;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.75;
+    transform: rotate(-16deg) scaleX(0);
+    transform-origin: left center;
+    animation: strike 1s cubic-bezier(0.7, 0, 0.2, 1) 0.5s forwards;
+  }
+  @keyframes strike { to { transform: rotate(-16deg) scaleX(1); } }
+
+  .arrow {
+    width: 46px;
+    height: 2px;
+    background: var(--grad);
+    position: relative;
+    opacity: 0;
+    animation: fade 0.7s ease 1.25s forwards;
+  }
+  .arrow::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    width: 9px;
+    height: 9px;
+    border-top: 2px solid var(--a2);
+    border-right: 2px solid var(--a2);
+    transform: rotate(45deg);
+  }
+  @keyframes fade { to { opacity: 1; } }
+
+  .say {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0;
+    animation: fade 0.7s ease 1.4s forwards;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(38px, 7.2vw, 68px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0 0 26px;
+  }
+  h1 em {
+    font-style: italic;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lede {
+    color: var(--ink-dim);
+    font-size: clamp(16px, 2.1vw, 19.5px);
+    max-width: 620px;
+    margin: 0 auto 40px;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    font-size: 14.5px;
+    text-decoration: none;
+    transition: border-color 0.3s, background 0.3s, transform 0.3s;
+  }
+  .cta:hover {
+    border-color: rgba(122, 162, 255, 0.55);
+    background: rgba(122, 162, 255, 0.09);
+    transform: translateY(-2px);
+  }
+
+  /* sections */
+  section {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 82px 28px;
+    border-top: 1px solid var(--line);
+  }
+  .kicker {
+    font-size: 11.5px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 30px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 26px;
+    transition: transform 0.4s, border-color 0.4s, background 0.4s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(122, 162, 255, 0.4);
+    background: rgba(122, 162, 255, 0.055);
+  }
+  .card h3 {
+    font-size: 17px;
+    margin: 0 0 12px;
+    font-weight: 650;
+  }
+  .card h3 span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .card p { margin: 0; color: var(--ink-dim); font-size: 15.3px; }
+
+  /* flow */
+  .flow { display: grid; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 22px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .step:last-child { border-bottom: 0; }
+  .num {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .step h4 { margin: 0 0 6px; font-size: 16.5px; font-weight: 650; }
+  .step p { margin: 0; color: var(--ink-dim); font-size: 15.3px; }
+  .tag {
+    display: inline-block;
+    margin-left: 9px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--a1);
+    border: 1px solid rgba(122, 162, 255, 0.35);
+    vertical-align: 2px;
+  }
+
+  /* not list */
+  .nots { display: grid; gap: 16px; max-width: 760px; }
+  .not {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 16px;
+    color: var(--ink-dim);
+    font-size: 15.6px;
+  }
+  .x { color: var(--a2); font-weight: 700; }
+  .not b { color: var(--ink); font-weight: 600; }
+
+  /* refs */
+  .refs {
+    color: var(--ink-faint);
+    font-size: 14.2px;
+    line-height: 2;
+    font-family: var(--serif);
+  }
+  .note {
+    margin-top: 26px;
+    padding: 18px 22px;
+    border-left: 2px solid var(--a2);
+    background: rgba(185, 139, 255, 0.05);
+    color: var(--ink-dim);
+    font-size: 14.8px;
+    border-radius: 0 12px 12px 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 60px 28px 80px;
+    color: var(--ink-faint);
+    font-size: 13.4px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.75s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .said::after, .arrow, .say { animation: none; opacity: 1; transform: none; }
+    .said::after { transform: rotate(-16deg) scaleX(1); }
+  }
+
+  @media (max-width: 560px) {
+    .step { grid-template-columns: 40px 1fr; gap: 14px; }
+    header nav a { margin-left: 14px; }
+    section { padding: 62px 22px; }
+    .hero { padding: 46px 22px 72px; }
+  }
+</style>
+</head>
+<body>
+<div class="aura"></div>
+<div class="grid"></div>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="#top">RECAST</a>
+    <nav>
+      <a href="#idea">The idea</a>
+      <a href="#why">Why it's different</a>
+      <a href="#not">What it isn't</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="swap" aria-hidden="true">
+        <span class="said">I</span>
+        <span class="arrow"></span>
+        <span class="say" id="pronoun">he</span>
+      </div>
+
+      <h1>You can already talk yourself down.<br />What if you could <em>read</em> yourself down?</h1>
+
+      <p class="lede">
+        <strong>Recast</strong> turns your first-person emotional writing into a third-person account.
+        Not to hide from what you feel — but to see it clearly enough to stop circling it.
+      </p>
+
+      <a class="cta" href="#idea">Why this works &nbsp;→</a>
+    </div>
+
+    <section id="idea">
+      <div class="kicker reveal">The idea</div>
+      <div class="cards">
+        <div class="card reveal">
+          <h3>Write it as <span>I</span></h3>
+          <p>Unedited, unfiltered, first person. The raw version is kept — it is the baseline every rewrite is measured against.</p>
+        </div>
+        <div class="card reveal">
+          <h3>Read it as <span>someone else</span></h3>
+          <p>The same event, one step back. It stops being a wound you keep pressing and becomes a story you can actually read.</p>
+        </div>
+        <div class="card reveal">
+          <h3>Change the <span>story</span>, not the pronouns</h3>
+          <p>That shift has a name — self-distancing — and thirty years of evidence behind it. Grammar alone does nothing.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="why">
+      <div class="kicker reveal">Why it's different</div>
+      <div class="flow">
+        <div class="step reveal">
+          <div class="num">01</div>
+          <div>
+            <h4>It refuses to just swap pronouns</h4>
+            <p>Third person alone changes nothing. The benefit comes from <em>recasting</em> the story — its meaning, its cause, its ending. So handing your own complaint back in the third person <b>fails the rewrite</b>.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="num">02</div>
+          <div>
+            <h4>Intensity decides the method <span class="tag">routing</span></h4>
+            <p>High emotion gets distance. Low emotion gets meaning. Distance applied to a small feeling just strips the meaning out of it.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="num">03</div>
+          <div>
+            <h4>Four viewpoints, one at a time</h4>
+            <p>The observer. A friend. Your future self. You choose — never all at once, because stacked perspectives blur into dissociation.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="num">04</div>
+          <div>
+            <h4>On demand, never a streak <span class="tag">dose cap</span></h4>
+            <p>Recast runs on real emotional events, not a daily checkbox. The only documented harm case in this literature came from <em>forced daily repetition over two weeks</em> — so Recast is built to avoid exactly that.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="num">05</div>
+          <div>
+            <h4>Local-first and encrypted</h4>
+            <p>A journal is the most private thing a person owns. It stays on your device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="not">
+      <div class="kicker reveal">What it is not</div>
+      <div class="nots">
+        <div class="not reveal"><span class="x">×</span><div><b>Not therapy.</b> Not a medical device. Not a diagnosis.</div></div>
+        <div class="not reveal"><span class="x">×</span><div><b>Not an escape hatch.</b> Distancing works because you come back to the problem, not because you avoid it.</div></div>
+        <div class="not reveal"><span class="x">×</span><div><b>Not endless.</b> Success looks like needing it less.</div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="kicker reveal">Grounded in</div>
+      <p class="refs reveal">
+        Ayduk &amp; Kross (2010) · Kross &amp; Ayduk (2009) · Kross et al. (2012) ·
+        Trope &amp; Liberman (2010) · Neff (2023) · Lau &amp; Tov (2023) · Giovanetti et al. (2019)
+      </p>
+      <div class="note reveal">
+        That last one is a negative result — and it is the reason this product has dose limits,
+        an intake screen, and a week-two check-in. The evidence shaped the design, including
+        the parts that say <em>don't</em>.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Recast — early design stage. No code yet; this page is the vision, not the build.
+  </footer>
+</div>
+
+<script>
+  // Scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: "0px 0px -60px 0px" });
+
+  document.querySelectorAll(".reveal").forEach((el, i) => {
+    el.style.transitionDelay = Math.min(i % 6, 4) * 70 + "ms";
+    io.observe(el);
+  });
+
+  // Stagger the hero cards
+  document.querySelectorAll("#idea .card").forEach((el, i) => {
+    el.style.transitionDelay = i * 110 + "ms";
+  });
+
+  // Pronoun cycle: I -> he / she
+  const pronoun = document.getElementById("pronoun");
+  const words = ["he", "she"];
+  if (pronoun && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % words.length;
+      pronoun.style.opacity = "0";
+      setTimeout(() => {
+        pronoun.textContent = words[i];
+        pronoun.style.opacity = "1";
+      }, 320);
+    }, 3400);
+  }
+  if (pronoun) {
+    pronoun.style.transition = "opacity .32s ease";
+  }
+</script>
+</body>
+</html>

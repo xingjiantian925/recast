@@ -213,6 +213,7 @@ a:hover { text-decoration: underline; }
 }
 .steprail__seg.is-done { background: var(--txj-primary-300); }
 .steprail__seg.is-now { background: var(--primary); }
+.dark .steprail__seg.is-done { opacity: .45; }
 
 /* ══ [Recast] 强度量表 0–10 ══ */
 .scale { display: grid; grid-template-columns: repeat(11, 1fr); gap: var(--space-1); }
@@ -228,6 +229,8 @@ a:hover { text-decoration: underline; }
 .scale__dot.is-low.is-on { background: var(--txj-info-500); border-color: var(--txj-info-500); }
 .scale__dot.is-mid.is-on { background: var(--txj-primary-500); border-color: var(--txj-primary-500); }
 .scale__dot.is-high.is-on { background: var(--txj-error-500); border-color: var(--txj-error-500); }
+/* 以上三态以 -500 深彩作底，须固定浅色文字（深色模式下 --primary-foreground 为深色，会不可读） */
+.scale__dot.is-low.is-on, .scale__dot.is-mid.is-on, .scale__dot.is-high.is-on { color: #fbfaf6; }
 .scale__legend { display: flex; justify-content: space-between; font-size: var(--font-size-caption); color: var(--txj-neutral-400); }
 
 /* ══ [Recast] 视角选择卡 ══ */

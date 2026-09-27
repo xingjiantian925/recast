@@ -21,12 +21,24 @@ export default {
     langLabel: 'Language',
     langZh: '中文',
     langEn: 'EN',
+    themeLabel: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    modelStatus: {
+      label: 'Model status',
+      unconfigured: 'Model not set',
+      configured: 'Model set',
+      verified: 'Model connected',
+      title: 'Model configuration status · open settings',
+    },
     nav: {
       home: 'Home',
       narrative: 'Narrative',
       checkin: 'Check-ins',
       safety: 'Safety & limits',
+      settings: 'Settings',
       support: 'Support & referral',
+      github: 'GitHub',
     },
     footer: {
       disclaimer:
@@ -34,7 +46,8 @@ export default {
       // [REVIEW] Crisis numbers are region-specific. Review before release.
       crisis:
         'If you are in crisis, contact 988 (US Suicide & Crisis Lifeline), 116 123 (Samaritans, UK and Ireland), or your local emergency number.',
-      localFirst: 'Local-first · data stays on this device · no daily prompts, no streak counts',
+      localFirst: 'Local-first · no account, no daily prompts, no streaks',
+      source: 'source, theory, and design notes',
     },
   },
 
@@ -60,6 +73,10 @@ export default {
       'The signal you left in the triage needs to be caught by a real person. This is not a failure, and it is not something you should handle on your own with a tool.',
     crisisLink: 'See support and referral →',
     eyebrow: 'On demand · you do not have to write every day',
+    heroSwapFrom: 'I',
+    heroPronouns: ['he', 'she'],
+    heroArtAlt:
+      'I and 我 crossed out, becoming they / he / she and TA / 她 / 他; below, a heart becomes a brain',
     titleLine1: 'When something keeps turning',
     titleLine2: 'over in your mind',
     lede: 'Write it down fully in first person first, then read it back in third. It is not a change of pronoun, it is a change in how you understand it.',
@@ -137,6 +154,18 @@ export default {
       'Under 15 minutes, you are below the dose range supported by evidence. You can continue, but the basis for an effect is weaker.',
     later: 'Write later',
     next: 'Done, next step',
+    precheckBtn: 'Entry quality precheck',
+    precheckTitle: 'Precheck result (a hint, never a gate)',
+    precheckOk: 'Present',
+    precheckMiss: 'Missing · can add later',
+    precheckNote:
+      'Missing items never block you: they can be filled in with options + input in the next steps. This only checks what the distancing rewrite will need — it does not grade your writing.',
+    precheck: {
+      len: 'Enough length (about 100+ characters)',
+      dose: 'Reaches the evidence dose (≥ 15 min)',
+      first: 'Written in the first person ("I")',
+      body: 'Names an emotion or a bodily sensation',
+    },
   },
 
   intensity: {
@@ -177,12 +206,11 @@ export default {
     guideEyebrow: 'Reconstruction prompt (pick one to work with)',
     generating: 'Recasting…',
     generate: 'Recast',
-    stubNote:
-      'Stub build: the first attempt deliberately returns a result that only changes pronouns, with no reconstruction, to demonstrate the check.',
     gateEyebrow: 'Step 5 · Reconstruction check',
     gatePassed: 'Passed: reconstruction happened this time',
     gateExhausted: 'Still failing: this material is not suited to distancing',
     gateFailed: 'Not passed: only the pronouns changed',
+    gateStructural: 'Not passed: the structural pre-check stopped this one',
     gateTagPass: 'Pass',
     gateTagExhausted: 'To support',
     gateTagRetry: 'Retry',
@@ -198,6 +226,10 @@ export default {
     trackWarm: 'Track 2 · Warmth layer',
     warmthNote:
       'Distancing runs cold. This layer is not comfort — it prevents the observer perspective from turning into a cold, critical stare.',
+    draftNote:
+      'Below is your current rewrite. It is shown as-is even when the check does not pass — during debugging you need to see what it actually became; not passing only means it does not yet meet the reconstruction bar, not that it is hidden.',
+    demoOutputNote:
+      'Demo result: in demo mode the rewrite is generated from your own text so the flow can be walked end to end; configure a model to get a real rewrite of your text.',
     selfCheckEyebrow: 'After reading · self-check (optional)',
     selfCheckNote:
       'The goal of distancing is to see more clearly, not to feel nothing. If any of the following is true, it is worth stopping.',
@@ -206,6 +238,107 @@ export default {
     retry: 'Retry with another prompt',
     toSupport: 'Go to the support path',
     save: 'Archive to the narrative',
+    structural: {
+      pronoun:
+        'The rewrite still carries first-person pronouns outside quoted speech. This is the floor, not the bar — retry with another prompting question.',
+      length:
+        'The rewrite drifted far from the length of the original, which usually means interpretation was added or facts were dropped. Retry with another prompting question.',
+    },
+    contextTitle: 'Context for this call',
+    context: { rewrite: 'Rewrite call', critique: 'Check call' },
+    contextBudget: '{used} of {budget} chars used',
+    contextKind: { guard: 'rules', task: 'task', source: 'source', memory: 'memory' },
+    contextDropped: '{n} capsule(s) left out for budget',
+    contextNote:
+      'Capsules are assembled by priority under a character budget. The memory samples are exactly the ones listed in settings, and can be turned off there.',
+  },
+
+  /* ── ScienceNote: paper-backed explanation shown after a passed recast ── */
+  science: {
+    title: 'Why this moment works — what the evidence says',
+    f1Claim:
+      'The benefit of self-distancing comes from reconstruction, not avoidance.',
+    f1Cite:
+      'Kross & Ayduk (2009), J Res Pers 43(5):923–927 · Kross et al. (2012), J Abnorm Psychol 121(3):559–569 [Evidence grade: A]',
+    f1Map:
+      'Recast does not just swap pronouns — the check gate tests whether the rewrite produced insight or meaning, not whether "I" became "he". Retries switch the guiding question, not the pronoun.',
+    f2Claim:
+      'Distancing reduces emotional and cardiovascular reactivity — the feeling stays, the charge lowers.',
+    f2Cite:
+      'Ayduk & Kross (2010), JPSP 98(5):809–829 · Résibois et al. (2018) [Evidence grade: A]',
+    f2Map:
+      'The distanced track keeps the emotional content and bodily cues intact. The warmth track prevents the observer perspective from turning into a cold, critical stare.',
+    f3Claim:
+      'Repeated, unguided, daily third-person writing can backfire in high-risk populations.',
+    f3Cite:
+      'Giovanetti, Revord, Sasso & Haeffel (2019), J Soc Clin Psychol 38(1):50–69 [Evidence grade: challenged — this is why the dose cap and check-in exist]',
+    f3Map:
+      'Recast caps weekly use, requires a guiding question each time, and does not default to daily practice. If reconstruction fails repeatedly, the flow moves to the support path instead of forcing another rewrite.',
+    disclaimer:
+      'No randomized trial has tested LLM-based third-person rewriting as an intervention. The evidence above supports the mechanism (self-distancing + reconstruction), not this specific tool. Recast is a clarity tool, not a treatment.',
+  },
+
+  /* ── Engine: model access, modes, and error copy (see src/engine/, src/model/) ── */
+  engine: {
+    demoNote:
+      'Demo mode: no model key is available (the key is memory-only and is cleared on refresh or when the tab closes), so a demo result is used — the first attempt is deliberately stopped by the check, and later attempts are generated from your own text. Paste a key in settings to get a real rewrite.',
+    modelNote:
+      'Model: {model} · the request goes straight from this page to the provider you configured, not through any server of ours.',
+    openSettings: 'Open settings',
+    errors: {
+      nokey: 'No key is set yet. Paste one, then test again.',
+      auth: 'The key was rejected (invalid or expired). Check it in settings.',
+      balance: 'The account has no balance, or this model is not enabled.',
+      rate: 'Rate limited. Wait a moment and try again.',
+      server: 'The provider returned an error. Retry; if it persists, check the base URL and the model name.',
+      network: 'The provider is unreachable (network, proxy, or CORS).',
+      timeout: 'The request timed out. Retry, or use a faster model.',
+      badResponse:
+        'The response could not be parsed. Retry; if it persists, check that the model supports JSON output.',
+    },
+  },
+
+  settings: {
+    title: 'Settings',
+    lede: 'Model access, memory, and how the tool addresses you. Nothing on this page is required to use Recast.',
+    modelEyebrow: 'Model',
+    modelTitle: 'Recasting engine',
+    modelNote:
+      'Recast talks to any OpenAI-compatible provider. Requests go directly from this browser to the base URL below — there is no server of ours in between.',
+    baseUrlLabel: 'Base URL',
+    modelNameLabel: 'Model name',
+    apiKeyLabel: 'API key',
+    apiKeyPlaceholder: 'sk-…',
+    apiKeyNote:
+      'By default the key is kept in memory only: never written to local storage or logs, and cleared on refresh. If you tick "Encrypt & save on this device" below, it is encrypted with a key generated randomly in this browser (AES-GCM) and stored locally, then restored automatically after a refresh so you do not have to paste it again. Note: this is obfuscation-level protection — the wrapping key also lives on this device, so anyone who can run scripts on this page can still decrypt it; it is not end-to-end encryption.',
+    persistKey: 'Encrypt & save on this device (survives refresh)',
+    persistUnavailable:
+      'This environment cannot store the key encrypted (needs https or localhost), so the key stays in memory only.',
+    forgetKey: 'Forget key now',
+    test: 'Test connection',
+    testing: 'Testing…',
+    testOk: 'Connected · {ms} ms',
+    testFail: 'Failed: {msg}',
+    keySet: 'Key set (memory only)',
+    keySetSaved: 'Key set (encrypted on this device)',
+    keyUnset: 'No key set — running in demo mode',
+    modeDemo: 'Demo mode',
+    modeModel: 'Model mode',
+    memoryEyebrow: 'Memory',
+    memoryTitle: 'What carries over',
+    memoryNote:
+      'Memory is derived from your own archive on this device. It is used only to match the tone of rewrites — it never triggers anything, never touches the dose, and is never analyzed in the background.',
+    useMemory: 'Use accepted rewrites as style samples',
+    sampleTitle: 'Samples currently in use',
+    sampleEmpty: 'No samples yet. They appear after your first recast passes the check and is archived.',
+    pronounEyebrow: 'Address',
+    pronounTitle: 'Third-person pronoun',
+    pronounNote: 'How the rewrite refers to you.',
+    pronounWords: { neutral: 'they', feminine: 'she', masculine: 'he' },
+    privacyEyebrow: 'Privacy',
+    privacyTitle: 'Where things go',
+    privacyBody:
+      'Entries, drafts, and settings stay in this browser. When you recast with a model configured, the entry text and the rewrite are sent to the provider you configured, under their terms. Your API key is memory-only by default, with an optional encrypted store on this device.',
   },
 
   archive: {
@@ -235,7 +368,7 @@ export default {
     numbersTitle: 'Numbers you can contact',
     proTitle: 'If you are going to see a professional',
     proBody:
-      'Bringing what you wrote is usually more accurate than retelling it. Recast does not upload or analyze anything; it only offers one local copy.',
+      'Bringing what you wrote is usually more accurate than retelling it. Nothing goes through any server of ours; this is one local copy.',
     copy: 'Copy what I wrote',
     copied: 'Copied to clipboard',
     exportHeader: '[Exported from Recast to share with a professional]',
@@ -278,6 +411,22 @@ export default {
     hitsLabel: 'criteria met:',
     footerNote:
       'If a perspective stops bringing new understanding, switching to another one is better than continuing with the same one.',
+    detail: {
+      open: 'View details',
+      back: 'Back to narrative',
+      notFound: 'This entry could not be found. It may have been deleted.',
+      resultPass: 'Passed the check',
+      resultFail: 'Did not pass',
+      excerptTitle: 'The record then (excerpt)',
+      excerptNote:
+        'To reduce repeated rumination, only the opening passage from that time is kept here — not the full text.',
+      sampleTitle: 'The distanced rewrite',
+      sampleNote: 'This is the distanced version from that time, written through the “{lens}” perspective.',
+      noSample: 'The reappraisal path produces no rewrite — only the theme tags.',
+      hitsTitle: 'Criteria met',
+      hitsNone: 'This entry did not meet any criteria.',
+      bandTitle: 'Why this intensity was handled this way',
+    },
   },
 
   checkin: {
@@ -339,7 +488,7 @@ export default {
       'No diagnosis, treatment, or crisis intervention; no medical claims of any kind.',
       'No claim to lower incidence, relieve symptoms, or replace professional support.',
       'No scale score trajectories are shown; the scales are used only for self-report and for deciding whether to refer.',
-      'No uploading, no background mood analysis, no silent decisions about your dose.',
+      'No background mood analysis, no silent decisions about your dose; your text is sent only to the model provider you configure, and only when you ask for a recast.',
       'No daily check-in, no streak counts, no form of forced use.',
     ],
     doseEyebrow: 'Dose spec',
@@ -380,7 +529,7 @@ export default {
     dataEyebrow: 'Data',
     dataTitle: 'Local-first',
     dataBody:
-      'This is the front-end prototype stage: everything is stored in browser local storage. Nothing leaves the device, nothing is uploaded, nothing goes online. The production version is planned on local (encrypted) SQLite, with no cross-device sync in the first release.',
+      'Entries, drafts, and settings live in this browser (the production version is planned on local encrypted SQLite). Two things can leave the device: the entry text and its rewrite, sent to the model provider you configured when you press Recast (their terms apply) — never through any server of ours; and whatever you copy out yourself. Your API key is kept in memory only.',
     clearData: 'Erase all data on this device',
     storedCount: '{n} stored',
     crisisEyebrow: 'Crisis',
@@ -633,22 +782,33 @@ I know the proposal can be fixed. But what I keep thinking about is not the prop
     fail: `He was turned down in front of everyone at the review. Those four people were looking at him. He heard his own heartbeat, but he said nothing, only smiled and said "Okay, I will rework it." He had prepared for two weeks. Two weeks thrown away. Once again he proved he is not good enough. That is the kind of person he is — useless at everything. He cannot even speak up for himself in the moment.`,
     pass: `He lost the foothold of two weeks of work in that review. He had assumed that being well prepared meant being safe, but the feedback pointed to a direction he had not considered, and the tone turned "the proposal needs changes" into "this person is not good enough". What this shows is that tying a rejected proposal to being an inadequate person was a bond he added himself — it did not happen in that room. What he can do next is break the feedback into items he can revise, instead of trying to prove himself.`,
     warmth: `What he felt today was humiliation, and the humiliation is real. It does not need to be erased, and it does not need to be judged. Being questioned in front of others hurts; anyone in that position would hurt — this is not his personal weakness. He did prepare as well as he could, and the effort itself was not rejected. He can be gentler with himself, and then do what needs to be done, one item at a time.`,
+    failWrap: `(Demo rewrite · attempt 1) He tried to put this into the third person, but as he went on he slipped back into the same self-judgment:
+
+{text}
+
+By the end, the pronoun had changed but the understanding had not — so this one is stopped by the check.`,
+    passWrap: `(Demo rewrite · attempt 2 · after switching the prompt) TA looked at it again:
+
+{text}
+
+This time TA went one step further: separating "what happened" from "what kind of person TA is". The event had its understandable reasons, but that does not mean TA is the problem. Next, TA turned attention back to one concrete thing that can be done.`,
+    warmWrap: `(Demo · warmth layer) What TA feels right now is real. It does not need to be erased, and it does not need to be judged. Anyone in that position would hurt — this is not TA's personal weakness. TA did their best, and that effort was not rejected.`,
   },
 
   evidence: {
     fail: {
       insight: 'No statement about a pattern of the self; only a list of event details.',
       meaning: 'Does not say what this event means.',
-      causal: 'Does not answer why this happened; it only repeats "that is the kind of person he is".',
-      closure: 'No closure; the last sentence returns to self-condemnation.',
-      action: 'No forward step; "useless at everything" is a conclusion, not an action.',
+      causal: 'Does not answer why this happened.',
+      closure: 'No closure; the ending returns to where it started.',
+      action: 'No forward step; it ends on a conclusion, not an action.',
     },
     pass: {
-      insight: '"Tying a rejected proposal to being an inadequate person was a bond he added himself" — his own attribution pattern becomes visible.',
-      meaning: '"It did not happen in that room" — the event is separated from the interpretation.',
-      causal: '"He had assumed that being well prepared meant being safe" — a causal explanation is given.',
-      closure: 'It closes on "instead of trying to prove himself"; the loop is interrupted.',
-      action: '"Break the feedback into items he can revise" — points to a concrete next step.',
+      insight: 'A pattern about the self is stated, not just the event.',
+      meaning: 'The text says what this event means.',
+      causal: 'The text answers why this happened.',
+      closure: 'The loop closes instead of repeating without end.',
+      action: 'The text points to a concrete next step.',
     },
   },
 }

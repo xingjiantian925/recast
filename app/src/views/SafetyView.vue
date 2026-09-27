@@ -17,14 +17,20 @@ import {
   DOSE_TABLE,
   SAFETY_RULES,
 } from '../mock/fixtures'
-import { TIER_INFO } from '../mock/engine'
+import { TIER_INFO } from '../engine'
 
 const { t } = useI18n()
 const offRamp = computed(() => journal.meta.offRamp)
-const cap = computed(() => (session.tier ? TIER_INFO.value[session.tier].doseCap : 3))
-const tierLabel = computed(() => (session.tier ? TIER_INFO.value[session.tier].label : ''))
+const cap = computed(() => TIER_INFO.value[session.tier]?.doseCap ?? 3)
+const tierLabel = computed(() => TIER_INFO.value[session.tier]?.label || '')
 const capLabel = computed(() => t('safety.capValue', { n: cap.value }))
 const storedCount = computed(() => t('safety.storedCount', { n: journal.entries.length }))
+
+/** 清除本机全部数据：日志 + 会话草稿（含分层）一起擦，两处存储都不留 */
+function eraseAll() {
+  journalApi.resetAll()
+  session.resetAll()
+}
 </script>
 
 <template>
@@ -123,7 +129,7 @@ const storedCount = computed(() => t('safety.storedCount', { n: journal.entries.
         {{ t('safety.dataBody') }}
       </p>
       <div class="row" style="margin-top: var(--space-4)">
-        <button class="btn btn-secondary btn-sm" @click="journalApi.resetAll()">
+        <button class="btn btn-secondary btn-sm" @click="eraseAll">
           <Icon name="trash-2" :size="14" class="btn-icon" />
           {{ t('safety.clearData') }}
         </button>

@@ -13,7 +13,7 @@ import { useI18n } from 'vue-i18n'
 import Icon from '../components/Icon.vue'
 import { journal } from '../stores/journal'
 import { session } from '../stores/session'
-import { TIER_INFO } from '../mock/engine'
+import { TIER_INFO } from '../engine'
 import { LENSES, CRITIQUE_CRITERIA } from '../mock/fixtures'
 
 const { t } = useI18n()
@@ -26,12 +26,15 @@ const lensUse = computed(() => {
   return Object.entries(m).sort((a, b) => b[1] - a[1])
 })
 
-const cap = computed(() => (session.tier ? TIER_INFO.value[session.tier].doseCap : 3))
+const cap = computed(() => TIER_INFO.value[session.tier]?.doseCap ?? 3)
 const doseCapNote = computed(() => t('narrative.statDoseNote', { n: cap.value }))
 
 /** 条目里存的是视角 / 判据的 id，展示时按当前语言取名字 */
 const lensName = (id) => LENSES.value.find((l) => l.id === id)?.name || id
 const criterionLabel = (id) => CRITIQUE_CRITERIA.value.find((c) => c.id === id)?.label || id
+
+/** excerpt 只存了开头一段；只有确实被截断时才补省略号 */
+const excerptOf = (e) => (e.length > e.excerpt.length ? `${e.excerpt}…` : e.excerpt)
 
 const weekLabel = (i, label) =>
   i === 7 ? t('narrative.thisWeek') : t('narrative.weeksAgo', { n: -label })
@@ -136,7 +139,13 @@ const agencyTrend = computed(() => {
       <section style="margin-top: var(--space-6)">
         <h2 class="t-h3" style="margin-bottom: var(--space-3)">{{ t('narrative.entriesTitle') }}</h2>
         <div class="stack--sm" style="display: flex; flex-direction: column; gap: var(--space-3)">
-          <article v-for="e in entries" :key="e.id" class="card card--flat entry">
+          <RouterLink
+            v-for="e in entries"
+            :key="e.id"
+            :to="'/narrative/' + e.id"
+            class="card card--flat entry entry--link"
+            style="text-decoration: none"
+          >
             <div class="row row--between">
               <div class="row" style="gap: var(--space-2)">
                 <span class="t-mono t-dim" style="font-size: 12px">{{ e.at.slice(0, 10) }}</span>
@@ -157,12 +166,16 @@ const agencyTrend = computed(() => {
                 </span>
               </div>
             </div>
-            <p class="entry__excerpt">{{ e.excerpt }}…</p>
+            <p class="entry__excerpt">{{ excerptOf(e) }}</p>
             <div v-if="e.critiqueHits?.length" class="hits">
               <span class="t-caption">{{ t('narrative.hitsLabel') }}</span>
               <span v-for="h in e.critiqueHits" :key="h" class="hit">{{ criterionLabel(h) }}</span>
             </div>
-          </article>
+            <span class="entry__more">
+              {{ t('narrative.detail.open') }}
+              <Icon name="chevron-right" :size="14" />
+            </span>
+          </RouterLink>
         </div>
       </section>
 
@@ -185,6 +198,13 @@ const agencyTrend = computed(() => {
 .bar__label { font-size: 11px; color: var(--txj-neutral-400); white-space: nowrap; }
 
 .entry { padding: var(--space-4); }
+.entry--link { display: block; color: inherit; transition: border-color .2s, box-shadow .2s; }
+.entry--link:hover { border-color: var(--primary); box-shadow: var(--shadow-2); }
+.entry--link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.entry__more {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: var(--space-3); font-size: 13px; color: var(--primary);
+}
 .entry__excerpt { margin-top: var(--space-2); color: var(--muted-foreground); font-size: 14.5px; line-height: 1.75; }
 .hits { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: var(--space-3); }
 .hit {

@@ -56,8 +56,12 @@ watch(
 )
 
 export const journalApi = {
-  /** Step 9 归档。provenance 字段为可分析结构，供将来与内嵌实验对照。 */
-  archive({ text, intensity, band, lens, passed, critiqueHits, kind }) {
+  /**
+   * Step 9 归档。provenance 字段为可分析结构，供将来与内嵌实验对照。
+   * `rewrite` 是通过质检的成稿，只截 400 字存入 `sample`，供 context/memory.js
+   * 作为"记忆"里的风格样例；重评路径没有成稿，两个字段都不产生。
+   */
+  archive({ text, rewrite = '', intensity, band, lens, passed, critiqueHits, kind }) {
     const themes = inferThemes({ passed, critiqueHits })
     const entry = {
       id: `e_${Date.now().toString(36)}`,
@@ -70,6 +74,7 @@ export const journalApi = {
       critiqueHits,
       themes,
       excerpt: text.slice(0, 120),
+      sample: kind === 'recast' && passed ? rewrite.slice(0, 400) : '',
       length: text.replace(/\s+/g, '').length,
       // 复选：同一视角是否被重复选择（用于观察耐受）
       repeatLens: journal.entries.some((e) => e.lens === lens && e.kind === 'recast'),

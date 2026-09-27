@@ -199,7 +199,12 @@
   --writing-measure: 62ch;
 }
 
-/* 深色模式令牌（原系统标注为推断产物，未实测渲染；此处保留待验证） */
+/* 深色模式令牌
+ * 原系统仅给出语义别名，未重映射 --txj-*-50..900 色阶；
+ * 这导致 base.css 中以浅色 tint（-50/-100）作底、以深色文字（-600..-800）
+ * 作前景的组件（.lens.is-on / .track--warm / .note* / .tag--* / .gate__mark--* …）
+ * 在深色态出现「近白字 + 近白底」而不可见。此处对该色阶做反相重映射：
+ *   -50 / -100 → 深色 tint 底； -300 起作为可读前景； -600..-800 → 浅色文字。 */
 .dark {
   --background: #211f1a;
   --surface: #2a2722;
@@ -208,16 +213,48 @@
   --muted: #322f27;
   --foreground: #f4f3ee;
   --muted-foreground: #b3ab98;
-  --border-subtle: #322f27;
-  --border-default: #454035;
+  --border-subtle: #3a362c;
+  --border-default: #4a4436;
   --bg-surface: var(--surface);
   --bg-muted: var(--muted);
   --text-primary: var(--foreground);
   --text-muted: var(--muted-foreground);
-  --primary: var(--txj-primary-400);
-  --color-primary: var(--txj-primary-400);
-  --accent: var(--txj-accent-400);
-  --color-accent: var(--txj-accent-400);
-  --ring: var(--txj-primary-400);
+  --primary: var(--txj-primary-300);
+  --color-primary: #9fc0a5;
+  --accent: var(--txj-accent-300);
+  --color-accent: #d8b184;
+  --ring: var(--txj-primary-300);
   --primary-foreground: #211f1a;
+  --color-success: #a4c793;
+  --color-warning: #d9b183;
+  --color-error: #d79c9c;
+  --color-info: #93b6c2;
+
+  /* 色阶反相：tint 底（-50/-100）*/
+  --txj-primary-50: #26302a;
+  --txj-primary-100: #32403a;
+  --txj-accent-50: #302a1c;
+  --txj-accent-100: #453a24;
+  --txj-success-50: #26301f;
+  --txj-success-100: #2d3c24;
+  --txj-warning-50: #302818;
+  --txj-warning-100: #453723;
+  --txj-info-50: #1f2c34;
+  --txj-info-100: #293c48;
+  --txj-error-50: #2f201f;
+  --txj-error-100: #452b28;
+  --txj-neutral-100: #33302a;
+
+  /* 色阶反相：可读前景 */
+  --txj-neutral-300: #b3ab98;
+  --txj-neutral-400: #b0a793;
+  --txj-neutral-500: #b3ab98;
+  --txj-neutral-600: #cbc3b2;
+  --txj-primary-700: #b6d0b9;
+  --txj-accent-700: #e0c191;
+  --txj-accent-800: #ecd6ad;
+  --txj-success-700: #aecb9e;
+  --txj-info-700: #a9c7d3;
+  --txj-warning-800: #e3c395;
+  --txj-error-700: #e2aaaa;
 }

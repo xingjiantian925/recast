@@ -17,18 +17,31 @@ export default {
     langLabel: '语言',
     langZh: '中文',
     langEn: 'EN',
+    themeLabel: '主题',
+    themeLight: '浅色',
+    themeDark: '深色',
+    modelStatus: {
+      label: '大模型配置状态',
+      unconfigured: '未配置模型',
+      configured: '已配置模型',
+      verified: '模型已连通',
+      title: '大模型配置状态 · 前往设置',
+    },
     nav: {
       home: '首页',
       narrative: '叙事线',
       checkin: '复核',
       safety: '安全与边界',
+      settings: '设置',
       support: '支持与转介',
+      github: 'GitHub',
     },
     footer: {
       disclaimer:
         'Recast 是一个自我觉察工具，不是医疗器械，不提供诊断、治疗或危机干预。它做的事只有一件：帮你在情绪事件发生时，把写下的东西重读一遍。',
       crisis: '如果你正处在危机中，请联系 12356（全国统一心理援助热线）或 120。',
-      localFirst: '本地优先 · 数据不出设备 · 无每日打卡，无连续天数',
+      localFirst: '本地优先 · 无账号 · 无每日打卡，无连续天数',
+      source: '源码、理论与设计笔记',
     },
   },
 
@@ -54,6 +67,9 @@ export default {
       '你在分诊里留下的信号需要被真人接住。这不是失败，也不是你需要靠一个工具自己处理的事。',
     crisisLink: '查看支持与转介 →',
     eyebrow: '按需触发 · 不必每天都写',
+    heroSwapFrom: '我',
+    heroPronouns: ['他', '她'],
+    heroArtAlt: '被划掉的我 I，变为 TA 她 他 与 they / he / she；下方一颗心变成大脑',
     titleLine1: '当你心里有件事',
     titleLine2: '一直在转的时候',
     lede: '先把它以第一人称完整写下来，再用第三人称读回去。不是换个人称，是换一次理解它的方式。',
@@ -125,6 +141,18 @@ export default {
     underDose: '时长低于 15 分钟时，尚未达到证据支持的剂量区间。这不是不能继续，只是效果依据更弱。',
     later: '稍后再写',
     next: '写完了，下一步',
+    precheckBtn: '输入质量预检',
+    precheckTitle: '预检结果（只提示，不拦你）',
+    precheckOk: '已具备',
+    precheckMiss: '缺失 · 下一步可补',
+    precheckNote:
+      '缺哪一项都不影响继续：缺失的要素会在后续步骤用选项 + 输入补齐。这一步只看"后续抽离改写需要什么"，不评价你写得好不好。',
+    precheck: {
+      len: '篇幅足够（约 100 字以上）',
+      dose: '达到证据剂量（≥ 15 分钟）',
+      first: '使用第一人称（"我"）',
+      body: '写出了情绪或躯体感受',
+    },
   },
 
   intensity: {
@@ -165,11 +193,11 @@ export default {
     guideEyebrow: '重构引导（必选一条重点使用）',
     generating: '正在改写…',
     generate: '生成改写',
-    stubNote: '桩实现：第 1 次会故意返回一个"只换人称、没有重构"的结果，用来演示质检门。',
     gateEyebrow: 'Step 5 · 重构质检',
     gatePassed: '通过了：这次发生了重构',
     gateExhausted: '连续未通过：这个素材不适合抽离',
     gateFailed: '未通过：只有人称变了',
+    gateStructural: '未通过：被结构预检拦下',
     gateTagPass: '通过',
     gateTagExhausted: '转支持',
     gateTagRetry: '需重试',
@@ -183,6 +211,10 @@ export default {
     trackCool: '轨道一 · 抽离叙述',
     trackWarm: '轨道二 · 温度层',
     warmthNote: '抽离偏冷。这一层不是安慰，是防"观察者视角变成冷酷的批判性凝视"。',
+    draftNote:
+      '下面是你当前的改写。即使本次未通过质检也照原样展示——调试阶段要能看到"这次到底改成了什么"；未通过只代表它还不满足重构标准，不代表内容不可见。',
+    demoOutputNote:
+      '演示结果：在演示模式下，改写由你的原文生成，用于走通流程；配置模型后会换成真实模型针对你文本的改写。',
     selfCheckEyebrow: '读完之后 · 自检（可跳过）',
     selfCheckNote:
       '抽离的目标是"看得更清楚"，不是"什么都感觉不到"。以下任何一条成立，都值得停下来。',
@@ -191,6 +223,97 @@ export default {
     retry: '换一条引导语重试',
     toSupport: '进入支持路径',
     save: '归档进叙事线',
+    structural: {
+      pronoun: '成稿在引语之外仍留有第一人称。这是底线不是标准——换一条引导语重试。',
+      length: '成稿长度与原稿偏差过大，通常意味着掺入了阐释或丢掉了事实。换一条引导语重试。',
+    },
+    contextTitle: '本次请求的上下文',
+    context: { rewrite: '改写调用', critique: '质检调用' },
+    contextBudget: '已用 {used} / {budget} 字符',
+    contextKind: { guard: '规则', task: '任务', source: '原文', memory: '记忆' },
+    contextDropped: '{n} 枚胶囊因预算未装入',
+    contextNote: '胶囊按优先级在字符预算内装配。记忆样例就是设置页列出的那些，可随时关闭。',
+  },
+
+  /* ── ScienceNote：改写通过后的论文背书 ── */
+  science: {
+    title: '为什么这一刻有效——证据怎么说',
+    f1Claim: '自我抽离的收益来自重构，而非回避。',
+    f1Cite:
+      'Kross & Ayduk (2009), J Res Pers 43(5):923–927 · Kross et al. (2012), J Abnorm Psychol 121(3):559–569 [证据等级：A]',
+    f1Map:
+      'Recast 不只是替换人称——质检门检查的是改写是否产生了洞察或意义，不是「我」是否变成了「他」。重试时换的是引导问题，不是人称。',
+    f2Claim: '抽离降低情绪与心血管反应性——感受还在，但冲击力降低了。',
+    f2Cite:
+      'Ayduk & Kross (2010), JPSP 98(5):809–829 · Résibois et al. (2018) [证据等级：A]',
+    f2Map:
+      '抽离轨保留情绪内容与躯体线索。温度层防止观察者视角变成冷酷的批判性凝视。',
+    f3Claim: '反复、无指导的每日第三人称书写在高危人群中可能适得其反。',
+    f3Cite:
+      'Giovanetti, Revord, Sasso & Haeffel (2019), J Soc Clin Psychol 38(1):50–69 [证据等级：被挑战——这正是剂量上限与定期复核存在的原因]',
+    f3Map:
+      'Recast 设有每周剂量上限，每次必须选一条引导语，不默认每日练习。如果重构连续失败，流程转入支持路径，而不是强行再改一次。',
+    disclaimer:
+      '目前没有任何随机对照试验检验过「LLM 把第一人称改写为第三人称」作为干预手段。上述证据支持的是机制（自我抽离 + 重构），不是这个具体工具。Recast 是清晰度工具，不是治疗。',
+  },
+
+  /* ── 引擎：模型接入、模式与错误文案（见 src/engine/、src/model/） ── */
+  engine: {
+    demoNote:
+      '演示模式：当前没有可用的模型 Key（Key 只存内存，刷新或关标签页即清空），因此使用演示结果——第 1 次会故意被质检拦下，之后会基于你的原文生成示例改写。要得到真实改写，请到设置里粘贴 Key。',
+    modelNote: '模型：{model} · 请求由本页直连你配置的服务商，不经过我们的服务器。',
+    openSettings: '打开设置',
+    errors: {
+      nokey: '还没有填入 Key。粘贴后再点一次测试。',
+      auth: '鉴权失败（Key 无效或已失效）。到设置里检查。',
+      balance: '账户余额不足，或该模型未开通。',
+      rate: '请求过于频繁或已达限额。稍后重试。',
+      server: '服务商返回了错误。可重试；若持续出现，检查 Base URL 与模型名。',
+      network: '服务商不可达（网络、代理或跨域问题）。',
+      timeout: '请求超时。可重试，或换更快的模型。',
+      badResponse: '返回内容无法解析。可重试；若持续出现，检查模型是否支持 JSON 输出。',
+    },
+  },
+
+  settings: {
+    title: '设置',
+    lede: '模型接入、记忆与称呼。这一页没有必填项，不配置也能用 Recast。',
+    modelEyebrow: '模型',
+    modelTitle: '改写引擎',
+    modelNote: '兼容任意 OpenAI 协议的服务商。请求由浏览器直连下面的 Base URL，中间没有我们的服务器。',
+    baseUrlLabel: 'Base URL',
+    modelNameLabel: '模型名',
+    apiKeyLabel: 'API Key',
+    apiKeyPlaceholder: 'sk-…',
+    apiKeyNote:
+      '默认只放在内存：不写本地存储、不进日志，刷新即清空。勾选下方「在本机加密保存」后，会用本机随机生成的密钥（AES-GCM）加密后存在浏览器里，刷新自动恢复，免去反复粘贴。请知悉：这是混淆级防护——密钥同样存在本机，能在此页面执行脚本的人仍可解开，不等同端到端加密。',
+    persistKey: '在本机加密保存（刷新免重填）',
+    persistUnavailable: '当前环境不支持加密存储（需 https 或 localhost），Key 只保留在内存中。',
+    forgetKey: '立即清空 Key',
+    test: '测试连接',
+    testing: '测试中…',
+    testOk: '连接正常 · {ms} ms',
+    testFail: '失败：{msg}',
+    keySet: 'Key 已设置（仅内存）',
+    keySetSaved: 'Key 已设置（本机加密保存）',
+    keyUnset: '未设置 Key — 当前为演示模式',
+    modeDemo: '演示模式',
+    modeModel: '模型模式',
+    memoryEyebrow: '记忆',
+    memoryTitle: '什么会被带过去',
+    memoryNote:
+      '记忆只从本机的归档里派生，只用于对齐改写的语气——不触发任何流程、不参与剂量、不做后台分析。',
+    useMemory: '把已接受的历史改写用作语气样例',
+    sampleTitle: '当前在用的样例',
+    sampleEmpty: '还没有样例。第一次改写通过质检并归档后就会出现。',
+    pronounEyebrow: '称呼',
+    pronounTitle: '第三人称称呼',
+    pronounNote: '改写时用来指代你的词。',
+    pronounWords: { neutral: 'TA', feminine: '她', masculine: '他' },
+    privacyEyebrow: '隐私',
+    privacyTitle: '数据去向',
+    privacyBody:
+      '条目、草稿与设置都留在本浏览器。配置模型后点击改写时，本次原文与成稿会发给你配置的服务商（适用其条款）。API Key 默认只在内存，可选择在本机加密保存。',
   },
 
   archive: {
@@ -218,7 +341,7 @@ export default {
     notRecastAction: '这不是失败，也不是"你写错了"。是这段素材本来就不该由这个工具处理。',
     numbersTitle: '可以联系的号码',
     proTitle: '如果你要去见专业人士',
-    proBody: '把写下的内容带过去，通常比自己转述更准。Recast 不上传、不分析，只提供一次本地复制。',
+    proBody: '把写下的内容带过去，通常比自己转述更准。这里不经过我们的服务器，只提供一次本地复制。',
     copy: '复制我写的内容',
     copied: '已复制到剪贴板',
     exportHeader: '【以下内容由 Recast 导出，供与专业人士沟通时使用】',
@@ -260,6 +383,21 @@ export default {
     repeatTag: '复选',
     hitsLabel: '命中的判据：',
     footerNote: '视角若长期带来不了新的理解，换一个比继续用同一个更合适。',
+    detail: {
+      open: '查看详情',
+      back: '返回叙事线',
+      notFound: '找不到这条记录，可能已被删除。',
+      resultPass: '通过质检',
+      resultFail: '未通过质检',
+      excerptTitle: '当时的记录（节选）',
+      excerptNote: '为减少反复咀嚼，这里只保留当时的开头一段，不保存全文。',
+      sampleTitle: '改写后的叙述',
+      sampleNote: '这是当时抽离改写后的版本，视角是「{lens}」。',
+      noSample: '重评路径不产生改写稿，只做了主题标注。',
+      hitsTitle: '命中的判据',
+      hitsNone: '这条记录没有命中任何判据。',
+      bandTitle: '这个强度为什么这样处理',
+    },
   },
 
   checkin: {
@@ -317,7 +455,7 @@ export default {
       '不提供诊断、治疗或危机干预；不做任何医疗声明。',
       '不声称降低发病率、缓解症状或替代专业支持。',
       '不展示量表分数轨迹；量表仅用于自评与判断是否需要转介。',
-      '不上传数据、不做后台情绪分析、不静默决定给你的剂量。',
+      '不做后台情绪分析、不静默决定你的剂量；只有你主动点击改写时，原文才发给你自己配置的模型服务商。',
       '不做每日打卡、连续天数或任何形式的强制使用。',
     ],
     doseEyebrow: '剂量规格',
@@ -357,7 +495,7 @@ export default {
     dataEyebrow: '数据',
     dataTitle: '本地优先',
     dataBody:
-      '当前为前端原型阶段：所有内容保存在浏览器本地存储里，不出设备、不上传、不联网。正式版本计划落在本地 SQLite（加密），第一版不做跨端同步。',
+      '条目、草稿与设置都保存在本浏览器（正式版计划落在本地加密 SQLite）。有两种情况内容会离开本机：① 你配置了模型并点击「生成改写」时，本次原文与成稿会直连你选择的服务商（适用其条款），不经过我们的服务器；② 你自己复制导出时。API Key 只存在于内存。',
     clearData: '清除本机全部数据',
     storedCount: '已存 {n} 条',
     crisisEyebrow: '危机',
@@ -602,22 +740,33 @@ export default {
     fail: `他在评审会上被当场否掉了方案。那四个人都在看着他，他听见了自己的心跳，但他什么都没说，只笑着说"好的我再改"。他准备了两个星期，两周的时间白扔了。他又一次证明了自己不够好，他就是这样的人，做什么都不行。他连当场把话说清楚都做不到。`,
     pass: `他在评审会上失去了两周工作的落点。他原以为准备充分就等于安全，但现场反馈指出的是他没想到的一个方向，而那个语气让"方案需要修改"变成了"这个人不够好"。这件事说明，把方案被否和人不行绑在一起，是他自己加的绑定，不是会议室里发生的事。接下来他能做的是把反馈拆成可以修改的条目，而不是去证明自己。`,
     warmth: `他今天很难堪，这份难堪是真实的，不需要被抹掉，也不需要被评判。被当众质疑会痛，任何人在那个位置上都会痛——这不是他一个人的脆弱。他确实尽力准备了，尽力这件事本身没有被否掉。他可以对自己温和一些，然后把该做的事一件件做完。`,
+    failWrap: `（演示改写 · 第 1 次）他把这件事换成第三人称来写，但写着写着，又回到了原来的评判里：
+
+{text}
+
+到这里，人称是换了，理解没有变——所以这一次会被质检拦下。`,
+    passWrap: `（演示改写 · 第 2 次 · 换引导语后）TA 重新看这件事：
+
+{text}
+
+这一次 TA 往前多走了一步：把"发生的事"和"TA 是个什么样的人"分开来看。事情有它可以理解的原因，但这不等于 TA 这个人有问题。接下来，TA 把注意力放回一件具体能做的事情上。`,
+    warmWrap: `（演示 · 温度层）TA 此刻的难受是真实的，不需要被抹掉，也不必被评判。换作任何人在那个位置上都会难受——这不是 TA 一个人的脆弱。TA 已经尽力了，这份尽力没有被否掉。`,
   },
 
   evidence: {
     fail: {
       insight: '未出现对自身模式的陈述；只有事件细节罗列。',
       meaning: '未指出这件事意味着什么。',
-      causal: '未回答"为什么会这样"，只在重复"他就是这样的人"。',
-      closure: '无收口，末句回到自我否定。',
-      action: '无下一步指向；"做什么都不行"是结论，不是行动。',
+      causal: '未回答"为什么会这样"。',
+      closure: '无收口，末句回到起点。',
+      action: '无下一步指向；停在结论，而不是行动。',
     },
     pass: {
-      insight: '"把方案被否和人不行绑在一起，是他自己加的绑定"——看见了自己的归因模式。',
-      meaning: '"不是会议室里发生的事"——区分了事件与解读。',
-      causal: '"原以为准备充分就等于安全"——给出了因果解释。',
-      closure: '收束在"而不是去证明自己"，循环被打断。',
-      action: '"把反馈拆成可以修改的条目"——指向具体可执行的下一步。',
+      insight: '出现了对自身模式的陈述，而不只是事件。',
+      meaning: '指出了这件事意味着什么。',
+      causal: '回答了"为什么会这样"。',
+      closure: '循环收口，不再无休止重复。',
+      action: '指向了具体可执行的下一步。',
     },
   },
 }

@@ -69,20 +69,21 @@ export function assembleCapsules(capsules, totalChars) {
 /* ══ 改写任务 ══ */
 
 export function buildRewriteContext({ text, lens, guidance, pronoun, anchors = [] }) {
+  const name = pronounName(pronoun, text)
   const capsules = [
     {
       id: 'rules.rewrite',
       kind: 'guard',
       role: 'system',
       priority: 100,
-      text: REWRITE_SYSTEM.replace('{pronoun}', pronoun),
+      text: fillPronoun(REWRITE_SYSTEM, name),
     },
     {
       id: 'task.recast',
       kind: 'task',
       role: 'user',
       priority: 90,
-      text: taskText({ lens, guidance, pronoun }),
+      text: taskText({ lens, guidance, name }),
     },
     {
       id: 'source.entry',
@@ -108,10 +109,29 @@ export function buildRewriteContext({ text, lens, guidance, pronoun, anchors = [
   return assembleCapsules(capsules, REWRITE_BUDGET)
 }
 
-function taskText({ lens, guidance, pronoun }) {
+/** 原文语言是否含中日韩统一表意文字 → 判为中文原文 */
+function hasCJK(s) {
+  return /[\u3400-\u9fff\uf900-\ufaff]/.test(String(s))
+}
+
+/**
+ * 第三人称**唯一**称呼：按原文语言给出，而不是给中英词对让模型二选一。
+ * 实测英文原文会被误写成中文的 TA，所以这里在装配层就定死一个。
+ */
+function pronounName(pronoun, text) {
+  const p = pronoun || { zh: 'TA', en: 'they' }
+  return hasCJK(text) ? p.zh : p.en
+}
+
+/** 把 {pronoun} 替换为唯一称呼（按原文语言，见 model/prompts.js 头注） */
+function fillPronoun(template, name) {
+  return template.replace(/{pronoun}/g, name)
+}
+
+function taskText({ lens, guidance, name }) {
   const lines = [
     'Rewrite this entry now, as a json object with "rewrite" and "warmth".',
-    `- Third-person pronoun for the writer: ${pronoun}.`,
+    `- Third-person pronoun for the writer: "${name}" (singular).`,
   ]
   if (lens) lines.push(`- Perspective in use: ${lens.name} — ${lens.desc}`)
   if (guidance) lines.push(`- Guiding question (drives the reconstruction, do not answer it literally): ${guidance}`)

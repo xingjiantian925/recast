@@ -31,6 +31,21 @@ function endpoint(baseUrl) {
   return `${String(baseUrl).replace(/\/+$/, '')}/chat/completions`
 }
 
+/**
+ * DeepSeek 的 flash / pro 是思考型模型：默认开启思考，思维链 token 与正文共享
+ * max_tokens 预算，且显著拉长延迟。改写与质检都是短的确定性任务，思维链没有
+ * 增益，所以对 DeepSeek 显式关闭（实测：关闭后同一条改写 <1s、正文预算充足）。
+ * 其他服务商不带该非标准字段，避免被严格实现拒绝。
+ */
+function isDeepSeek(baseUrl) {
+  try {
+    const host = new URL(baseUrl).hostname
+    return host === 'api.deepseek.com' || host.endsWith('.deepseek.com')
+  } catch {
+    return false
+  }
+}
+
 function errorFromStatus(status, detail) {
   if (status === 401 || status === 403) return new ModelError('auth', { status, detail })
   if (status === 402) return new ModelError('balance', { status, detail })
@@ -50,6 +65,7 @@ export async function chatCompletion({
   json = false,
   maxTokens,
   timeoutMs = DEFAULT_TIMEOUT_MS,
+  requireContent = true,
 }) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
@@ -68,6 +84,7 @@ export async function chatCompletion({
           stream: false,
           ...(json ? { response_format: { type: 'json_object' } } : {}),
           ...(maxTokens ? { max_tokens: maxTokens } : {}),
+          ...(isDeepSeek(baseUrl) ? { thinking: { type: 'disabled' } } : {}),
         }),
         signal: controller.signal,
       })
@@ -83,8 +100,11 @@ export async function chatCompletion({
 
     const data = await res.json().catch(() => null)
     const content = data?.choices?.[0]?.message?.content
-    if (typeof content !== 'string' || !content.trim()) throw new ModelError('badResponse')
-    return content
+    if (typeof content === 'string' && content.trim()) return content
+    // requireContent=false 用于「测试连接」：思考型模型可能把预算全用在
+    // reasoning 上、正文为空，此时只要拿到合法 choices 就说明链路通。
+    if (!requireContent && Array.isArray(data?.choices) && data.choices.length > 0) return ''
+    throw new ModelError('badResponse', { detail: JSON.stringify(data ?? {}).slice(0, 300) })
   } finally {
     clearTimeout(timer)
   }
@@ -103,6 +123,7 @@ export async function pingModel({ baseUrl, apiKey, model, timeoutMs = 20_000 }) 
     messages: [{ role: 'user', content: 'ping' }],
     maxTokens: 8,
     timeoutMs,
+    requireContent: false,
   })
   return { ms: Date.now() - started }
 }

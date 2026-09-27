@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import StepRail from '../components/StepRail.vue'
 import Icon from '../components/Icon.vue'
-import { BAND_INFO } from '../mock/engine'
+import { BAND_INFO } from '../engine'
 import { session } from '../stores/session'
 
 const router = useRouter()

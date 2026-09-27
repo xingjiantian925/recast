@@ -47,7 +47,7 @@ function dismiss() {
 
 <style scoped>
 .meta { padding: var(--space-4); }
-.meta__icon { color: var(--txj-info-500); margin-top: 2px; }
+.meta__icon { color: var(--color-info); margin-top: 2px; }
 .meta__eyebrow { margin: 0; }
 .meta__body {
   margin-top: var(--space-2);

@@ -54,8 +54,34 @@ function fillSample() {
 
 function goNext() {
   session.setElapsed(elapsed.value)
+  // 以"用户确认写完"作为 Step 1 的完成标记（不设字数门槛，空稿也能继续）
+  session.finishWriting()
   router.push('/intensity')
 }
+
+/**
+ * 输入质量预检（Step 1）——**只提示，从不拦你**。
+ * 缺哪一项都不影响继续：缺失的要素留给后续步骤用选项 + 输入补齐。
+ * 判据是"后续抽离改写需要什么"，不是"写得好不好"。
+ */
+const showPrecheck = ref(false)
+
+const FIRST_PERSON_RE = /(我|自己)|\b(i|me|my|myself|mine)\b/i
+const BODY_RE =
+  /(心跳|发抖|颤抖|胸口|胃|喉咙|肩膀|呼吸|出汗|恶心|脸红)|(heartbeat|shak|trembl|chest|stomach|throat|breath|sweat|nausea|blush)/i
+const EMOTION_RE =
+  /(难过|愤怒|生气|害怕|恐惧|焦虑|紧张|羞耻|委屈|无力|绝望|孤独|伤心|痛苦|沮丧|烦躁)|(sad|angry|afraid|fear|anxious|nervous|ashamed|shame|helpless|lost|lonely|hurt|upset|pain|grief|frustrat)/i
+
+const precheckItems = computed(() => {
+  const text = session.text || ''
+  const body = BODY_RE.test(text) || EMOTION_RE.test(text)
+  return [
+    { id: 'len', ok: session.wordCount >= 100 },
+    { id: 'dose', ok: !underDose.value },
+    { id: 'first', ok: FIRST_PERSON_RE.test(text) },
+    { id: 'body', ok: body },
+  ]
+})
 </script>
 
 <template>
@@ -89,7 +115,25 @@ function goNext() {
       <span class="counter" :class="{ 'counter--warn': session.wordCount < 100 }">
         {{ t('write.counter', { n: session.wordCount }) }}
       </span>
-      <button class="btn btn-tertiary btn-sm" @click="fillSample">{{ t('write.fillSample') }}</button>
+      <div class="row" style="gap: var(--space-2)">
+        <button class="btn btn-secondary btn-sm" @click="showPrecheck = !showPrecheck">
+          <Icon name="circle-question-mark" :size="14" class="btn-icon" />
+          {{ t('write.precheckBtn') }}
+        </button>
+        <button class="btn btn-tertiary btn-sm" @click="fillSample">{{ t('write.fillSample') }}</button>
+      </div>
+    </div>
+
+    <div v-if="showPrecheck" class="precheck">
+      <p class="precheck__title">{{ t('write.precheckTitle') }}</p>
+      <ul class="precheck__list">
+        <li v-for="item in precheckItems" :key="item.id" class="precheck__item" :class="{ 'is-ok': item.ok }">
+          <Icon :name="item.ok ? 'circle-check' : 'circle-minus'" :size="14" class="precheck__icon" />
+          <span class="precheck__label">{{ t('write.precheck.' + item.id) }}</span>
+          <span class="precheck__state">{{ item.ok ? t('write.precheckOk') : t('write.precheckMiss') }}</span>
+        </li>
+      </ul>
+      <p class="precheck__note">{{ t('write.precheckNote') }}</p>
     </div>
 
     <div class="prompts">
@@ -99,13 +143,13 @@ function goNext() {
       </div>
     </div>
 
-    <div v-if="session.startedAt" class="note note--quiet" style="margin-top: var(--space-4)">
+    <div v-if="underDose" class="note note--quiet" style="margin-top: var(--space-4)">
       {{ t('write.underDose') }}
     </div>
 
     <div class="row row--end" style="margin-top: var(--space-5)">
       <RouterLink to="/" class="btn btn-tertiary" style="text-decoration: none">{{ t('write.later') }}</RouterLink>
-      <button class="btn btn-primary" :disabled="session.wordCount < 20" @click="goNext">
+      <button class="btn btn-primary" @click="goNext">
         {{ t('write.next') }}
         <Icon name="arrow-right" :size="16" class="btn-icon" />
       </button>
@@ -125,4 +169,19 @@ function goNext() {
 }
 .prompt { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--txj-neutral-500); }
 .prompt__icon { color: var(--txj-primary-300); }
+
+.precheck {
+  margin-top: var(--space-3); padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  background: var(--surface-2, rgba(0, 0, 0, 0.015));
+}
+.precheck__title { font-size: 13px; font-weight: 600; color: var(--txj-neutral-600); margin-bottom: var(--space-2); }
+.precheck__list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.precheck__item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--txj-neutral-500); }
+.precheck__item.is-ok { color: var(--txj-neutral-700); }
+.precheck__icon { color: var(--color-warning); }
+.precheck__item.is-ok .precheck__icon { color: var(--txj-primary-500, var(--primary)); }
+.precheck__label { flex: 1; }
+.precheck__state { font-size: 12px; color: var(--txj-neutral-400); }
+.precheck__note { margin-top: var(--space-2); font-size: 12px; color: var(--txj-neutral-400); line-height: 1.55; }
 </style>

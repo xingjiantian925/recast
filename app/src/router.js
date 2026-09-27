@@ -20,8 +20,10 @@ const routes = [
   { path: '/archive', name: 'archive', component: () => import('./views/ArchiveView.vue'), meta: { step: 'Step 9', need: 'routed' } },
   { path: '/support', name: 'support', component: () => import('./views/SupportView.vue'), meta: { step: 'Step 7 · 10' } },
   { path: '/narrative', name: 'narrative', component: () => import('./views/NarrativeView.vue') },
+  { path: '/narrative/:id', name: 'narrativeEntry', component: () => import('./views/NarrativeEntryView.vue') },
   { path: '/checkin', name: 'checkin', component: () => import('./views/CheckinView.vue'), meta: { step: 'Step 10' } },
   { path: '/safety', name: 'safety', component: () => import('./views/SafetyView.vue'), meta: { step: 'Step 10' } },
+  { path: '/settings', name: 'settings', component: () => import('./views/SettingsView.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 

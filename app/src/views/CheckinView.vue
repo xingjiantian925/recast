@@ -11,7 +11,7 @@
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PHQ9, RRS_BROODING, CRISIS_RESOURCES } from '../mock/fixtures'
-import { TIER_INFO } from '../mock/engine'
+import { TIER_INFO } from '../engine'
 import { session } from '../stores/session'
 import { journal, journalApi } from '../stores/journal'
 
@@ -22,10 +22,10 @@ const verdict = ref(null)
 const phq = reactive(Array(PHQ9.value.items.length).fill(null))
 const rrs = reactive(Array(RRS_BROODING.value.items.length).fill(null))
 
-const schedule = computed(() => (session.tier ? TIER_INFO.value[session.tier].checkinWeeks : [2, 4, 8]))
+const schedule = computed(() => TIER_INFO.value[session.tier]?.checkinWeeks ?? [2, 4, 8])
 const due = computed(() => (session.tier ? journalApi.checkinDue(session.tier) : { due: false }))
 const isWatch = computed(() => session.tier === 'watch')
-const tierLabel = computed(() => (session.tier ? TIER_INFO.value[session.tier].label : ''))
+const tierLabel = computed(() => TIER_INFO.value[session.tier]?.label || '')
 
 const complete = computed(() => phq.every((v) => v !== null) && rrs.every((v) => v !== null))
 

@@ -88,13 +88,18 @@
   }
   header nav a:hover { color: var(--ink); }
 
-  /* hero */
+  /* hero: text left, art right */
   .hero {
-    max-width: var(--maxw);
+    max-width: 1120px;
     margin: 0 auto;
-    padding: 74px 28px 96px;
-    text-align: center;
+    padding: 66px 28px 96px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(28px, 4.5vw, 64px);
+    align-items: center;
   }
+  .hero__art { min-width: 0; }
+  .hero__art img { display: block; width: 100%; height: auto; }
   .swap {
     display: inline-flex;
     align-items: center;
@@ -155,8 +160,8 @@
   h1 {
     font-family: var(--serif);
     font-weight: 400;
-    font-size: clamp(38px, 7.2vw, 68px);
-    line-height: 1.1;
+    font-size: clamp(33px, 4.4vw, 54px);
+    line-height: 1.12;
     letter-spacing: -0.015em;
     margin: 0 0 26px;
   }
@@ -171,8 +176,8 @@
   .lede {
     color: var(--ink-dim);
     font-size: clamp(16px, 2.1vw, 19.5px);
-    max-width: 620px;
-    margin: 0 auto 40px;
+    max-width: 540px;
+    margin: 0 0 40px;
   }
   .lede strong { color: var(--ink); font-weight: 600; }
 
@@ -307,6 +312,13 @@
     font-size: 13.4px;
     border-top: 1px solid var(--line);
   }
+  footer a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: color 0.25s, border-color 0.25s;
+  }
+  footer a:hover { color: var(--ink); border-color: var(--ink-dim); }
 
   /* scroll reveal */
   .reveal {
@@ -320,6 +332,12 @@
     .reveal { opacity: 1; transform: none; transition: none; }
     .said::after, .arrow, .say { animation: none; opacity: 1; transform: none; }
     .said::after { transform: rotate(-16deg) scaleX(1); }
+  }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 52px 22px 76px; gap: 36px; }
+    .hero__art { width: 100%; max-width: 430px; margin: 0 auto; }
+    header nav a { margin-left: 16px; }
   }
 
   @media (max-width: 560px) {
@@ -341,25 +359,34 @@
       <a href="#idea">The idea</a>
       <a href="#why">Why it's different</a>
       <a href="#not">What it isn't</a>
+      <a href="https://github.com/xingjiantian925/recast" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </header>
 
   <main id="top">
     <div class="hero">
-      <div class="swap" aria-hidden="true">
-        <span class="said">I</span>
-        <span class="arrow"></span>
-        <span class="say" id="pronoun">he</span>
+      <div class="hero__text">
+        <div class="swap" aria-hidden="true">
+          <span class="said">I</span>
+          <span class="arrow"></span>
+          <span class="say" id="pronoun">he</span>
+        </div>
+
+        <h1>You can already talk yourself down.<br />What if you could <em>read</em> yourself down?</h1>
+
+        <p class="lede">
+          <strong>Recast</strong> turns your first-person emotional writing into a third-person account.
+          Not to hide from what you feel — but to see it clearly enough to stop circling it.
+        </p>
+
+        <a class="cta" href="#idea">Why this works &nbsp;→</a>
       </div>
 
-      <h1>You can already talk yourself down.<br />What if you could <em>read</em> yourself down?</h1>
-
-      <p class="lede">
-        <strong>Recast</strong> turns your first-person emotional writing into a third-person account.
-        Not to hide from what you feel — but to see it clearly enough to stop circling it.
-      </p>
-
-      <a class="cta" href="#idea">Why this works &nbsp;→</a>
+      <div class="hero__art">
+        <img src="assets/hero-home.svg"
+             alt="I and 我 crossed out, becoming they / he / she and TA / 她 / 他; below, a heart becomes a brain"
+             width="560" height="640" />
+      </div>
     </div>
 
     <section id="idea">
@@ -445,7 +472,8 @@
   </main>
 
   <footer>
-    Recast — early design stage. No code yet; this page is the vision, not the build.
+    Recast — Phase 1 running (web). Source, theory and design notes on
+    <a href="https://github.com/xingjiantian925/recast" target="_blank" rel="noopener">GitHub</a>.
   </footer>
 </div>
 

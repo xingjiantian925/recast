@@ -13,7 +13,7 @@ import { useI18n } from 'vue-i18n'
 import StepRail from '../components/StepRail.vue'
 import Icon from '../components/Icon.vue'
 import { PHQ9, GAD7, RRS_BROODING, SCALES, CRISIS_RESOURCES, CRISIS_COPY } from '../mock/fixtures'
-import { triage, TIER_INFO } from '../mock/engine'
+import { triage, TIER_INFO } from '../engine'
 import { session } from '../stores/session'
 import { journalApi } from '../stores/journal'
 
@@ -40,7 +40,7 @@ const progress = computed(() => {
 const scaleIndex = computed(() => SCALES.value.findIndex((s) => s.id === current.value.id) + 1)
 
 const tier = ref(null)
-const tierInfo = computed(() => (tier.value ? TIER_INFO.value[tier.value] : null))
+const tierInfo = computed(() => TIER_INFO.value[tier.value] ?? null)
 const doseCapLabel = computed(() => t('intake.doseCapValue', { n: tierInfo.value?.doseCap ?? 0 }))
 const checkinPointsLabel = computed(() =>
   t('intake.checkinPointsValue', {

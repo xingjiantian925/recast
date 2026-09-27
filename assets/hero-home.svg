@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 640" width="560" height="640" role="img"
+     aria-label="I and 我 crossed out, becoming they / he / she and TA / 她 / 他; below, a heart becomes a brain">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0f1e"/>
+      <stop offset="0.55" stop-color="#101733"/>
+      <stop offset="1" stop-color="#161c3a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7aa2ff"/>
+      <stop offset="1" stop-color="#b98bff"/>
+    </linearGradient>
+    <!-- 箭头专用：纯竖直/水平线的包围盒宽度或高度为 0，objectBoundingBox 渐变会失效，
+         因此这两条渐变用 userSpaceOnUse 直接给坐标 -->
+    <linearGradient id="arrowV" gradientUnits="userSpaceOnUse" x1="280" y1="198" x2="280" y2="260">
+      <stop offset="0" stop-color="#7aa2ff"/>
+      <stop offset="1" stop-color="#b98bff"/>
+    </linearGradient>
+    <linearGradient id="arrowH" gradientUnits="userSpaceOnUse" x1="221" y1="548" x2="338" y2="548">
+      <stop offset="0" stop-color="#b98bff"/>
+      <stop offset="1" stop-color="#7aa2ff"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7aa2ff" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#7aa2ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#b98bff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#b98bff" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="panel">
+      <rect x="1" y="1" width="558" height="638" rx="26"/>
+    </clipPath>
+    <style>
+      .breathe-a { animation: breathe 5.5s ease-in-out infinite; }
+      .breathe-b { animation: breathe 5.5s ease-in-out 2.75s infinite; }
+      @keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.74; } }
+      @media (prefers-reduced-motion: reduce) {
+        .breathe-a, .breathe-b { animation: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- panel -->
+  <rect x="1" y="1" width="558" height="638" rx="26" fill="url(#bg)" stroke="#ffffff" stroke-opacity="0.09"/>
+  <g clip-path="url(#panel)">
+    <ellipse cx="280" cy="160" rx="250" ry="170" fill="url(#glowA)"/>
+    <ellipse cx="360" cy="545" rx="220" ry="150" fill="url(#glowB)"/>
+    <!-- faint grid -->
+    <g stroke="#ffffff" stroke-opacity="0.03" stroke-width="1">
+      <path d="M0 80 H560 M0 160 H560 M0 240 H560 M0 320 H560 M0 400 H560 M0 480 H560 M0 560 H560"/>
+      <path d="M80 0 V640 M160 0 V640 M240 0 V640 M320 0 V640 M400 0 V640 M480 0 V640"/>
+    </g>
+  </g>
+
+  <!-- ── first person, crossed out ── -->
+  <g text-anchor="middle"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif">
+    <text x="252" y="152" font-size="74" font-weight="600" fill="#4d5880">我</text>
+    <text x="322" y="152" font-size="74" font-weight="600" fill="#4d5880">I</text>
+    <line x1="203" y1="137" x2="345" y2="117" stroke="#4d5880" stroke-width="4.5"
+          stroke-opacity="0.85" stroke-linecap="round"/>
+  </g>
+
+  <!-- arrow down -->
+  <g stroke="url(#arrowV)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9">
+    <path d="M280 200 V256"/>
+    <path d="M267 243 L280 256 L293 243"/>
+  </g>
+
+  <!-- ── third person ── -->
+  <g text-anchor="middle"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif">
+    <text x="287" y="342" font-size="56" font-weight="600" letter-spacing="14" fill="url(#accent)">TA 她 他</text>
+    <text x="280" y="396" font-size="27" letter-spacing="2.5" fill="#9aa5cd">they / he / she</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="120" y1="438" x2="440" y2="438" stroke="#ffffff" stroke-opacity="0.08"/>
+
+  <!-- ── heart → brain ── -->
+  <g class="breathe-a" transform="translate(205 548) scale(0.76) translate(-50 -46.5)"
+     stroke="#b98bff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path fill="#b98bff" fill-opacity="0.09"
+          d="M50 86 C24 64 8 48 8 30 C8 17 18 7 31 7 C40 7 47 12 50 19 C53 12 60 7 69 7 C82 7 92 17 92 30 C92 48 76 64 50 86 Z"/>
+  </g>
+
+  <g stroke="url(#arrowH)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M223 548 H332"/>
+    <path d="M319 535 L332 548 L319 561"/>
+  </g>
+
+  <g class="breathe-b" stroke="#7aa2ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+     fill="#7aa2ff" fill-opacity="0.09" transform="translate(432 548) scale(0.82) translate(-50 -47)">
+    <!-- left hemisphere -->
+    <path d="M48 12 C41 4 27 6 23 16 C13 18 8 28 13 36 C6 42 7 54 16 57 C17 67 29 72 38 66 C43 63 47 57 47 50 Z"/>
+    <!-- right hemisphere -->
+    <path d="M52 12 C59 4 73 6 77 16 C87 18 92 28 87 36 C94 42 93 54 84 57 C83 67 71 72 62 66 C57 63 53 57 53 50 Z"/>
+    <!-- folds -->
+    <g fill="none">
+      <path d="M50 10 C49 24 49 38 50 52"/>
+      <path d="M22 26 C28 22 34 24 36 30"/>
+      <path d="M20 42 C27 37 35 39 37 46"/>
+      <path d="M64 30 C66 24 72 22 78 26"/>
+      <path d="M63 46 C65 39 73 37 80 42"/>
+      <!-- stem -->
+      <path d="M45 68 C43 76 41 80 37 84"/>
+      <path d="M55 68 C57 76 59 80 63 84"/>
+    </g>
+  </g>
+</svg>

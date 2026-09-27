@@ -9,7 +9,6 @@
  * 与模型 Key 无关；Key 永远只在 model/config.js 的内存容器里。
  */
 import { computed, reactive, watch } from 'vue'
-import { i18n } from '../i18n'
 
 const KEY = 'recast.prefs.v0'
 const DEFAULTS = { pronoun: 'neutral', useMemory: true, theme: 'light' }
@@ -46,10 +45,17 @@ watch(
   { deep: true },
 )
 
-/** 第三人称词：中文侧 TA / 她 / 他，英文侧 they / she / he（数据取自 locales，用 tm()） */
-export const pronounWord = computed(
-  () => i18n.global.tm('settings.pronounWords')[prefs.pronoun] || 'TA',
-)
+/**
+ * 第三人称词对：称呼随**原文语言**走，而不是界面语言。
+ * 界面是英文、原文是中文时，把「they」直译会写成复数「他们」，指代对象就变了。
+ */
+const PRONOUN_PAIRS = {
+  neutral: { zh: 'TA', en: 'they' },
+  feminine: { zh: '她', en: 'she' },
+  masculine: { zh: '他', en: 'he' },
+}
+
+export const pronounPair = computed(() => PRONOUN_PAIRS[prefs.pronoun] || PRONOUN_PAIRS.neutral)
 
 /** 主题：把 .dark 类挂到 <html>（tokens.css 的选择器是 .dark） */
 export function applyTheme() {

@@ -362,10 +362,29 @@ export default {
     pronounTitle: 'Third-person pronoun',
     pronounNote: 'How the rewrite refers to you.',
     pronounWords: { neutral: 'they', feminine: 'she', masculine: 'he' },
-    privacyEyebrow: 'Privacy',
-    privacyTitle: 'Where things go',
+    privacyEyebrow: 'Data safety',
+    privacyTitle: 'Your data stays with you',
     privacyBody:
-      'Entries, drafts, and settings stay in this browser. When you recast with a model configured, the entry text and the rewrite are sent to the provider you configured, under their terms. Your API key is memory-only by default, with an optional encrypted store on this device.',
+      'We spell out where everything goes so you can use Recast with confidence: your writing never leaves this device unless you choose to recast.',
+    privacyPoints: [
+      {
+        title: 'Everything lives in your browser',
+        body: 'Entries, drafts, memory, how we address you, and display preferences are saved only in this browser on this device. There is no server of ours — nothing is uploaded, collected, or analyzed in the background.',
+      },
+      {
+        title: 'Your API key is encrypted on this device',
+        body: 'The model API key is memory-only by default. If you choose “Encrypt & save on this device”, it is encrypted with a key generated randomly in this browser (AES-GCM), and the ciphertext is written only to this device — never sent to us.',
+      },
+      {
+        title: 'How it is used follows your model provider',
+        body: 'Only when you tap recast are the entry text and the rewrite sent straight from your browser to the provider you configured. How that provider uses and retains it is governed by their own terms and privacy policy.',
+      },
+    ],
+    deleteAll: 'Delete all data on this device',
+    deleteConfirm: 'Delete everything? This cannot be undone',
+    deleteYes: 'Yes, delete',
+    deleteNo: 'Cancel',
+    deleteDone: 'All local data deleted',
   },
 
   archive: {

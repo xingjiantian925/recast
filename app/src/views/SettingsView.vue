@@ -17,6 +17,8 @@ import { useI18n } from 'vue-i18n'
 import Icon from '../components/Icon.vue'
 import { pingModel } from '../model/client'
 import {
+  DEFAULT_BASE_URL,
+  DEFAULT_MODEL,
   getApiKey,
   hasApiKey,
   keyPersisted,
@@ -27,8 +29,11 @@ import {
   setVerifyResult,
   forgetApiKey,
 } from '../model/config'
+import * as vault from '../model/keystore'
 import { candidateAnchors } from '../context/memory'
-import { prefs, pronounPair } from '../stores/prefs'
+import { journalApi } from '../stores/journal'
+import { session } from '../stores/session'
+import { applyTheme, prefs, pronounPair } from '../stores/prefs'
 
 const { t, tm } = useI18n()
 
@@ -98,6 +103,35 @@ const samples = computed(() => candidateAnchors())
 
 /* ── 称呼 ── */
 const pronounOptions = computed(() => Object.entries(tm('settings.pronounWords')))
+
+/* ── 数据安全 ── */
+const safetyPoints = computed(() => tm('settings.privacyPoints'))
+const confirming = ref(false)
+const deleted = ref(false)
+
+/**
+ * 删除本机全部数据：条目、叙事线、草稿、记忆样例、称呼与界面偏好、模型配置，
+ * 以及本机加密保存的 API Key（密文 + 保险箱密钥）。
+ * 语言偏好保留（只影响界面文字，不属于个人数据）；重置后各 store 的 watch
+ * 会把空状态写回存储，本机不再留有内容。
+ */
+function wipeAll() {
+  journalApi.resetAll()
+  session.resetAll()
+  prefs.pronoun = 'neutral'
+  prefs.useMemory = true
+  prefs.theme = 'light'
+  applyTheme()
+  modelConfig.baseUrl = DEFAULT_BASE_URL
+  modelConfig.model = DEFAULT_MODEL
+  modelConfig.persistKey = true
+  forgetApiKey()
+  vault.purge()
+  if (keyInput.value) keyInput.value.value = ''
+  testResult.value = null
+  confirming.value = false
+  deleted.value = true
+}
 </script>
 
 <template>
@@ -254,13 +288,42 @@ const pronounOptions = computed(() => Object.entries(tm('settings.pronounWords')
       </div>
     </section>
 
-    <!-- 隐私 -->
-    <section class="card" style="margin-top: var(--space-4)">
+    <!-- 数据安全 -->
+    <section id="data-safety" class="card" style="margin-top: var(--space-4)">
       <span class="t-eyebrow">{{ t('settings.privacyEyebrow') }}</span>
       <h2 class="t-h4" style="margin-top: var(--space-2)">{{ t('settings.privacyTitle') }}</h2>
       <p class="t-body t-dim" style="margin-top: var(--space-3); line-height: 1.8">
         {{ t('settings.privacyBody') }}
       </p>
+
+      <ul class="safety">
+        <li v-for="p in safetyPoints" :key="p.title" class="safety__item">
+          <Icon name="circle-check" :size="16" class="safety__icon" />
+          <div>
+            <p class="safety__title">{{ p.title }}</p>
+            <p class="t-caption safety__body">{{ p.body }}</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="row row--wrap" style="margin-top: var(--space-4)">
+        <template v-if="!confirming">
+          <button class="btn btn-danger" @click="confirming = true">
+            <Icon name="trash-2" :size="16" class="btn-icon" />
+            {{ t('settings.deleteAll') }}
+          </button>
+        </template>
+        <template v-else>
+          <span class="t-caption">{{ t('settings.deleteConfirm') }}</span>
+          <button class="btn btn-danger" @click="wipeAll">{{ t('settings.deleteYes') }}</button>
+          <button class="btn btn-tertiary" @click="confirming = false">
+            {{ t('settings.deleteNo') }}
+          </button>
+        </template>
+        <span v-if="deleted && !confirming" class="tag tag--success">
+          <span class="dot" />{{ t('settings.deleteDone') }}
+        </span>
+      </div>
     </section>
   </main>
 </template>
@@ -275,6 +338,12 @@ const pronounOptions = computed(() => Object.entries(tm('settings.pronounWords')
   border-radius: var(--radius-md); background: var(--surface);
 }
 .samples__text { margin: 4px 0 0; font-size: 13px; line-height: 1.7; color: var(--muted-foreground); }
+
+.safety { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.safety__item { display: flex; gap: var(--space-3); align-items: flex-start; }
+.safety__icon { color: var(--color-success, var(--primary)); margin-top: 2px; }
+.safety__title { margin: 0; font-weight: 600; font-size: 14.5px; color: var(--foreground); }
+.safety__body { margin: 4px 0 0; line-height: 1.75; }
 
 .chip {
   padding: 6px var(--space-4); cursor: pointer;

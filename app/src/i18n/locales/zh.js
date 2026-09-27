@@ -334,10 +334,29 @@ export default {
     pronounTitle: '第三人称称呼',
     pronounNote: '改写时用来指代你的词。',
     pronounWords: { neutral: 'TA', feminine: '她', masculine: '他' },
-    privacyEyebrow: '隐私',
-    privacyTitle: '数据去向',
+    privacyEyebrow: '数据安全',
+    privacyTitle: '你的数据留在你这里',
     privacyBody:
-      '条目、草稿与设置都留在本浏览器。配置模型后点击改写时，本次原文与成稿会发给你配置的服务商（适用其条款）。API Key 默认只在内存，可选择在本机加密保存。',
+      '把数据去向完整说清楚，是想让你用得放心：你的内容不会离开这台设备，除非你主动点了改写。',
+    privacyPoints: [
+      {
+        title: '数据都在浏览器里面',
+        body: '条目、草稿、记忆、称呼与界面偏好都只保存在这台设备的浏览器中。我们没有服务器，不上传、不收集，也不做任何后台分析。',
+      },
+      {
+        title: 'API Key 加密后只存本地浏览器',
+        body: '大模型 API Key 默认只放在内存；选择「在本机加密保存」后，会用本机随机生成的密钥（AES-GCM）加密，密文也只写进这台设备的浏览器，不会发送给我们。',
+      },
+      {
+        title: '怎么用，跟随大模型提供商',
+        body: '只有在你点击改写时，原文与成稿才从浏览器直连你自己配置的服务商；这些内容如何被使用与保存，遵循该服务商自己的条款与隐私政策。',
+      },
+    ],
+    deleteAll: '删除本机全部数据',
+    deleteConfirm: '确认删除？此操作不可撤销',
+    deleteYes: '确认删除',
+    deleteNo: '取消',
+    deleteDone: '已删除本机全部数据',
   },
 
   archive: {

@@ -35,10 +35,21 @@ function load() {
     if (parsed.dose?.weekStart !== weekStart()) {
       parsed.dose = { weekStart: weekStart(), used: {}, warnings: parsed.dose?.warnings ?? 0 }
     }
+    // 旧版本或损坏的条目可能缺 themes，读取时补齐，避免叙事线/归档页读 themes.* 时整页崩掉
+    parsed.entries = normalizeEntries(parsed.entries)
     return { ...blank(), ...parsed }
   } catch {
     return blank()
   }
+}
+
+/** 保证不变量：每条已归档条目都带 themes，且形如 inferThemes 的输出 */
+function normalizeEntries(entries) {
+  if (!Array.isArray(entries)) return []
+  return entries.map((e) => ({
+    ...e,
+    themes: e?.themes || inferThemes({ passed: e?.passed, critiqueHits: e?.critiqueHits || [] }),
+  }))
 }
 
 export const journal = reactive(load())

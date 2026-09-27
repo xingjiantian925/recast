@@ -25,7 +25,8 @@ const archived = ref(false)
 const entry = computed(() => (archived.value ? journal.entries[0] : null))
 
 onMounted(() => {
-  if (isReappraisal.value && journal.entries.length >= 0 && !archived.value) {
+  // 低强度素材不走抽离，在这里以重评引导收尾后入库（只入一次）
+  if (isReappraisal.value && !archived.value) {
     journalApi.archive({
       text: session.text,
       intensity: session.intensity,
@@ -35,10 +36,8 @@ onMounted(() => {
       critiqueHits: [],
       kind: 'reappraisal',
     })
-    archived.value = true
-  } else {
-    archived.value = true
   }
+  archived.value = true
 })
 
 function done() {

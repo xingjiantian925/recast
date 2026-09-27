@@ -39,3 +39,34 @@ router.beforeEach((to) => {
   if (session.canEnter(need)) return true
   return { name: session.entryRoute() }
 })
+
+/**
+ * 部署切换安全网。
+ *
+ * 路由按需加载，分块名带内容哈希。每次发布后旧分块会被新分块替换；
+ * 若用户标签页里还停留在旧版 index.html（一直开着没刷新），点任意导航到尚未
+ * 缓存的懒加载路由时，浏览器会去拉已被替换的分块并失败，抛出
+ * "Failed to fetch dynamically imported module" —— 表现为"点一下某个按钮就报错"。
+ *
+ * 出现这种错误时整页重载即可取回新版本。用 sessionStorage 打标，
+ * 避免重载后仍旧失败时陷入无限刷新。
+ */
+const CHUNK_RELOAD_KEY = 'recast.chunkReload'
+
+router.onError((error) => {
+  const message = String(error?.message || error || '')
+  const isChunkError = /dynamically imported module|Importing a module script failed/i.test(message)
+  if (!isChunkError) return
+  if (sessionStorage.getItem(CHUNK_RELOAD_KEY)) return
+  try {
+    sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+  } catch {
+    /* 存储不可用时也允许重载一次 */
+  }
+  window.location.reload()
+})
+
+/** 成功换页即视为新版本已就位，清掉标记，下次发布可再次自愈 */
+router.afterEach(() => {
+  sessionStorage.removeItem(CHUNK_RELOAD_KEY)
+})

@@ -53,6 +53,13 @@ const statusTag = computed(() => {
           {{ t('app.nav.' + n.key) }}
         </RouterLink>
       </nav>
+
+      <!-- 快捷入口：一屏完成 Step 1–3，直达改写（未分诊时由路由守卫先送去 /intake） -->
+      <RouterLink to="/quick" class="quick-cta" :title="t('app.quickStart')">
+        <Icon name="zap" :size="14" />
+        <span class="quick-cta__text">{{ t('app.quickStart') }}</span>
+      </RouterLink>
+
       <span class="spacer" />
 
       <!-- 大模型配置状态：点击前往设置；未配置即演示模式 -->
@@ -171,6 +178,34 @@ const statusTag = computed(() => {
   transition: color .15s;
 }
 .foot-link:hover { color: var(--foreground); }
+
+/* 快捷开始：顶栏主色轻量 pill；当前就在 /quick 时反白高亮；窄屏只留图标 */
+.quick-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--txj-primary-300, var(--border-default));
+  border-radius: var(--radius-pill);
+  background: var(--txj-primary-50, transparent);
+  color: var(--txj-primary-500, var(--primary));
+  font-size: var(--font-size-caption);
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.quick-cta:hover { background: var(--muted); text-decoration: none; }
+.quick-cta.router-link-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+@media (max-width: 900px) {
+  .quick-cta__text { display: none; }
+  .quick-cta { padding: 0 9px; }
+}
 
 /* 通用分段 pill：语言与主题共用（顶栏右侧） */
 .pill {

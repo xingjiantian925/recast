@@ -7,7 +7,11 @@
  *   2. 追加书写区专用字号令牌（原系统面向数据密集界面，正文 15px 不适合长文书写）
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* [Recast] 不再通过 @import 拉取 Google Fonts：
+   该请求是渲染阻塞的，实测在国内网络下需要 12s 以上（含 Noto Serif SC / Noto Sans SC
+   共 700+ 个字面），首屏白屏时间被它单独决定。字体栈已包含完整的系统回退
+   （Iowan Old Style / Palatino / Georgia / Songti SC / PingFang SC …），
+   若本机安装了 Noto 系列，浏览器仍会优先命中，视觉表现不变。 */
 /* @group-priority: primary, accent, success, warning, info */
 
 :root {

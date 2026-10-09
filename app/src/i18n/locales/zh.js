@@ -36,6 +36,7 @@ export default {
       support: '支持与转介',
       github: 'GitHub',
     },
+    quickStart: '快捷开始',
     footer: {
       disclaimer:
         'Recast 是一个自我觉察工具，不是医疗器械，不提供诊断、治疗或危机干预。它做的事只有一件：帮你在情绪事件发生时，把写下的东西重读一遍。',
@@ -76,6 +77,8 @@ export default {
     ctaContinue: '继续这次书写',
     ctaStart: '开始',
     ctaRecord: '记录一次情绪事件',
+    quickCta: '快捷模式',
+    quickHint: '赶时间？快捷模式把书写、强度与视角压缩到一屏，直达改写。分诊与剂量规则不变。',
     viewNarrative: '回看叙事线',
     triggersLead: '什么时候适合用一次？以下任一条成立即可——由你自己判断：',
     triggers: [
@@ -130,6 +133,25 @@ export default {
       disclaimer:
         '目前没有随机对照试验检验过「LLM 第三人称改写」作为干预手段。上述证据支持的是机制（自我抽离 + 重构），不是这个具体工具。Recast 是清晰度工具，不是治疗。',
     },
+  },
+
+  /* ── 快捷模式：Step 1–3 压缩到一屏（安全规则与完整流程一致） ── */
+  quick: {
+    eyebrow: '快捷模式 · 一屏完成',
+    title: '快速处理一件事',
+    lede: '写下事件、给出强度、选一个视角，然后直接进入改写。压缩的是页面数，不是安全规则：强度路由、视角唯一、剂量计数全部照旧。',
+    fullFlow: '改用完整流程',
+    textLabel: '发生了什么',
+    textPlaceholder: '用第一人称写下这件事，不加工，不收束…',
+    counter: '{n} 字',
+    intensityLabel: '现在回想它，有多强',
+    lensLabel: '用谁的眼睛读',
+    lensRule: '一次只用一种视角。不确定就保持默认的「未来的自己」。',
+    submit: '开始改写',
+    submitLow: '完成，进入重评归档',
+    submitNeedIntensity: '先给出强度',
+    atCap: '已达本周改写上限。这周建议改为回看叙事线，或休息。',
+    doseNote: '快捷模式不引导 15 分钟书写时长。时间充裕时，完整流程的效果依据更强。',
   },
 
   intake: {

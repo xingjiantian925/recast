@@ -77,6 +77,13 @@ function start() {
   router.push('/write')
 }
 
+/** 快捷模式：老用户跳过逐步引导，一屏完成 Step 1–3（未分诊先去分诊，规则不变） */
+function quickStart() {
+  if (session.tier === 'crisis') return
+  if (!session.tier) return router.push('/intake')
+  router.push('/quick')
+}
+
 const checkinInfo = computed(() => (session.tier ? journalApi.checkinDue(session.tier) : null))
 const checkinDueLabel = computed(() =>
   checkinInfo.value?.due ? t('home.checkinDue', { week: checkinInfo.value.week }) : ''
@@ -134,10 +141,21 @@ const whyPoints = computed(() => {
                 <Icon name="pen-line" :size="18" />
                 {{ ctaLabel }}
               </button>
-              <RouterLink to="/narrative" class="btn btn-secondary btn-lg" style="text-decoration: none">
+              <button
+                v-if="session.tier !== 'crisis'"
+                class="btn btn-secondary btn-lg"
+                @click="quickStart"
+              >
+                <Icon name="zap" :size="18" />
+                {{ t('home.quickCta') }}
+              </button>
+              <RouterLink to="/narrative" class="btn btn-tertiary btn-lg" style="text-decoration: none">
                 {{ t('home.viewNarrative') }}
               </RouterLink>
             </div>
+            <p v-if="session.tier !== 'crisis'" class="t-caption hero__quick-hint">
+              {{ t('home.quickHint') }}
+            </p>
           </div>
 
           <div class="hero__art">
@@ -299,6 +317,12 @@ const whyPoints = computed(() => {
 .hero__title { margin-top: var(--space-3); }
 .hero__lede { margin-top: var(--space-4); max-width: 560px; }
 .hero__cta { margin-top: var(--space-5); }
+.hero__quick-hint {
+  margin-top: var(--space-3);
+  max-width: 560px;
+  line-height: 1.7;
+  color: var(--txj-neutral-400);
+}
 .hero__art { min-width: 0; }
 .hero__art img { display: block; width: 100%; height: auto; }
 

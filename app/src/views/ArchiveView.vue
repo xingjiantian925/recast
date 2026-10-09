@@ -25,8 +25,10 @@ const archived = ref(false)
 const entry = computed(() => (archived.value ? journal.entries[0] : null))
 
 onMounted(() => {
-  // 低强度素材不走抽离，在这里以重评引导收尾后入库（只入一次）
-  if (isReappraisal.value && !archived.value) {
+  // 低强度素材不走抽离，在这里以重评引导收尾后入库。
+  // "只入一次"的标记放在 session.archivedAt（持久化），而不是组件内 ref：
+  // 用户从 /archive 去叙事线再回来会重挂载本组件，ref 会归零导致双写。
+  if (isReappraisal.value && !session.archivedAt) {
     journalApi.archive({
       text: session.text,
       intensity: session.intensity,
@@ -36,6 +38,7 @@ onMounted(() => {
       critiqueHits: [],
       kind: 'reappraisal',
     })
+    session.archivedAt = new Date().toISOString()
   }
   archived.value = true
 })

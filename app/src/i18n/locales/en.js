@@ -40,6 +40,7 @@ export default {
       support: 'Support & referral',
       github: 'GitHub',
     },
+    quickStart: 'Quick start',
     footer: {
       disclaimer:
         'Recast is a self-awareness tool, not a medical device. It does not provide diagnosis, treatment, or crisis intervention. It does one thing: when an emotional event happens, it helps you read back what you wrote.',
@@ -83,6 +84,9 @@ export default {
     ctaContinue: 'Continue this entry',
     ctaStart: 'Start',
     ctaRecord: 'Record an emotional event',
+    quickCta: 'Quick mode',
+    quickHint:
+      'In a hurry? Quick mode compresses writing, intensity, and perspective into one screen and goes straight to the rewrite. Triage and dose rules stay the same.',
     viewNarrative: 'View the narrative',
     triggersLead:
       'When is it worth using? Any one of these is enough — you are the one who judges:',
@@ -145,6 +149,25 @@ export default {
       disclaimer:
         'No trial has tested LLM-based third-person rewriting as an intervention. The evidence supports the mechanism (self-distancing plus reconstruction), not this specific tool. Recast is a clarity tool, not a treatment.',
     },
+  },
+
+  /* ── Quick mode: Steps 1–3 on one screen (safety rules identical to the full flow) ── */
+  quick: {
+    eyebrow: 'Quick mode · one screen',
+    title: 'Process one thing, fast',
+    lede: 'Write the event, give it an intensity, pick one perspective, then go straight to the rewrite. What gets compressed is the number of pages, not the safety rules: intensity routing, one lens at a time, and dose counting all stay the same.',
+    fullFlow: 'Use the full flow instead',
+    textLabel: 'What happened',
+    textPlaceholder: 'Write it in the first person, unpolished, unresolved…',
+    counter: '{n} chars',
+    intensityLabel: 'Recalling it now, how strong is it',
+    lensLabel: 'Whose eyes to read it through',
+    lensRule: 'One perspective at a time. Not sure? Keep the default, your future self.',
+    submit: 'Start the rewrite',
+    submitLow: 'Done · go to reappraisal archive',
+    submitNeedIntensity: 'Give an intensity first',
+    atCap: 'You have reached this week’s rewrite cap. This week, read back the narrative instead, or rest.',
+    doseNote: 'Quick mode does not guide the 15-minute writing period. When time allows, the full flow has stronger evidence behind it.',
   },
 
   intake: {

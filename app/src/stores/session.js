@@ -33,6 +33,7 @@ const PERSISTED = [
   'result',
   'stabilized',
   'flags',
+  'archivedAt',
 ]
 
 function blank() {
@@ -68,6 +69,9 @@ function blank() {
     /* Step 7 / Step 10 */
     stabilized: false,
     flags: [],
+
+    /* Step 9：本次会话是否已入库（重评路径用；防止 /archive 重挂载双写） */
+    archivedAt: null,
   }
 }
 

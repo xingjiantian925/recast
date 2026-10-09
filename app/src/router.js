@@ -14,6 +14,8 @@ const routes = [
   { path: '/', name: 'home', component: () => import('./views/HomeView.vue') },
   { path: '/intake', name: 'intake', component: () => import('./views/IntakeView.vue'), meta: { step: 'Step 0' } },
   { path: '/write', name: 'write', component: () => import('./views/WriteView.vue'), meta: { step: 'Step 1', need: 'triaged' } },
+  // 快捷模式：Step 1–3 压缩到一屏，安全规则不变（仍需已分诊，强度路由照旧）
+  { path: '/quick', name: 'quick', component: () => import('./views/QuickView.vue'), meta: { step: 'Step 1–3', need: 'triaged' } },
   { path: '/intensity', name: 'intensity', component: () => import('./views/IntensityView.vue'), meta: { step: 'Step 2', need: 'written' } },
   { path: '/lens', name: 'lens', component: () => import('./views/LensView.vue'), meta: { step: 'Step 3', need: 'routed' } },
   { path: '/recast', name: 'recast', component: () => import('./views/RecastView.vue'), meta: { step: 'Step 4–6', need: 'lensed' } },

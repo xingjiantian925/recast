@@ -83,10 +83,10 @@ async function run() {
   await session.runEngine({ guidance: guidanceText.value })
 }
 
-function retry() {
+async function retry() {
   // 换引导语重试——这是 Step 5 的明确要求
   promptIndex.value = (promptIndex.value + 1) % RECONSTRUE_PROMPTS.value.length
-  session.runEngine({ guidance: guidanceText.value })
+  await session.runEngine({ guidance: guidanceText.value })
 }
 
 function toggleFlag(id) {
@@ -96,6 +96,12 @@ function toggleFlag(id) {
 }
 
 function save() {
+  // 幂等守卫：归档后用户仍可能经「继续本次书写」回到本页再点一次，
+  // 与 /archive 重挂载同类问题——已入库就直接回归档页，不再双写。
+  if (session.archivedAt) {
+    router.push('/archive')
+    return
+  }
   journalApi.archive({
     text: session.text,
     rewrite: result.value.distanced, // 记忆层的风格样例来源（只存通过质检的）
@@ -106,6 +112,7 @@ function save() {
     critiqueHits: (result.value.critique.findings || []).filter((f) => f.hit).map((f) => f.id),
     kind: 'recast',
   })
+  session.archivedAt = new Date().toISOString()
   router.push('/archive')
 }
 

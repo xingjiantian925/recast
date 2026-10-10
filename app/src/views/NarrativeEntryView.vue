@@ -6,18 +6,28 @@
  * 展示口径沿用 NarrativeView / ArchiveView：只读**已归档的结构化字段**
  * （时间、视角、强度、主题、命中判据、节选、改写稿），不渲染任何量表轨迹（§7）。
  */
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Icon from '../components/Icon.vue'
-import { journal } from '../stores/journal'
+import { journal, journalApi } from '../stores/journal'
 import { BAND_INFO } from '../engine'
 import { LENSES, CRITIQUE_CRITERIA } from '../mock/fixtures'
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 
 const entry = computed(() => journal.entries.find((e) => e.id === route.params.id) || null)
+
+/* 单条删除：两步确认；重构条目会同步回退当周剂量（见 journal.removeEntry） */
+const confirmingDelete = ref(false)
+
+function removeEntry() {
+  if (!entry.value) return
+  journalApi.removeEntry(entry.value.id)
+  router.push('/narrative')
+}
 
 /** 条目里存的是视角 / 判据的 id，展示时按当前语言取名字 */
 const lensName = (id) => LENSES.value.find((l) => l.id === id)?.name || id
@@ -157,7 +167,24 @@ const excerptText = computed(() => {
 
       <div class="note note--quiet" style="margin-top: var(--space-5)">{{ t('archive.notScoreNote') }}</div>
 
-      <div class="row row--end" style="margin-top: var(--space-5)">
+      <div class="row row--between row--wrap" style="margin-top: var(--space-5)">
+        <div class="row row--wrap" style="gap: var(--space-2)">
+          <template v-if="!confirmingDelete">
+            <button class="btn btn-tertiary btn-sm del" @click="confirmingDelete = true">
+              <Icon name="trash-2" :size="14" />
+              {{ t('narrative.detail.delete') }}
+            </button>
+          </template>
+          <template v-else>
+            <span class="t-caption">{{ t('narrative.detail.deleteConfirm') }}</span>
+            <button class="btn btn-danger btn-sm" @click="removeEntry">
+              {{ t('narrative.detail.deleteYes') }}
+            </button>
+            <button class="btn btn-tertiary btn-sm" @click="confirmingDelete = false">
+              {{ t('narrative.detail.deleteNo') }}
+            </button>
+          </template>
+        </div>
         <RouterLink to="/narrative" class="btn btn-secondary" style="text-decoration: none">
           {{ t('narrative.detail.back') }}
         </RouterLink>
@@ -168,6 +195,8 @@ const excerptText = computed(() => {
 
 <style scoped>
 .back { display: inline-flex; align-items: center; gap: 6px; }
+.del { display: inline-flex; align-items: center; gap: 6px; color: var(--color-error); }
+.del:hover { background: var(--txj-error-50); }
 
 .themes { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-4); }
 .theme { display: flex; flex-direction: column; gap: var(--space-2); }

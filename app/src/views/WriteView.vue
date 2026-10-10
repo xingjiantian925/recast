@@ -59,6 +59,14 @@ function goNext() {
   router.push('/intensity')
 }
 
+/* 键盘党捷径：Cmd/Ctrl + Enter 等价于点"下一步" */
+function onKeydown(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault()
+    goNext()
+  }
+}
+
 /**
  * 输入质量预检（Step 1）——**只提示，从不拦你**。
  * 缺哪一项都不影响继续：缺失的要素留给后续步骤用选项 + 输入补齐。
@@ -108,12 +116,14 @@ const precheckItems = computed(() => {
         :placeholder="t('write.placeholder')"
         spellcheck="false"
         @input="onInput"
+        @keydown="onKeydown"
       />
     </div>
 
     <div class="row row--between" style="margin-top: var(--space-3)">
       <span class="counter" :class="{ 'counter--warn': session.wordCount < 100 }">
         {{ t('write.counter', { n: session.wordCount }) }}
+        <span class="counter__kbd"><kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>Enter</kbd> {{ t('write.kbdHint') }}</span>
       </span>
       <div class="row" style="gap: var(--space-2)">
         <button class="btn btn-secondary btn-sm" @click="showPrecheck = !showPrecheck">

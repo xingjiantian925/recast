@@ -285,5 +285,25 @@ a:hover { text-decoration: underline; }
 .kbd { font-family: var(--font-mono); font-size: 11px; padding: 2px 5px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--surface); color: var(--muted-foreground); }
 .disclaimer { font-size: var(--font-size-caption); color: var(--txj-neutral-400); line-height: 1.7; }
 .timer { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+kbd {
+  font-family: var(--font-mono); font-size: 11px; line-height: 1;
+  padding: 2px 5px; border: 1px solid var(--border-default); border-bottom-width: 2px;
+  border-radius: var(--radius-sm); background: var(--surface); color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.counter__kbd { margin-left: var(--space-3); opacity: .8; white-space: nowrap; }
+
 .fade-enter-active, .fade-leave-active { transition: opacity .22s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* ══ 前庭友好：系统开启"减弱动态效果"时的全局兜底 ══
+   PixelMorph / HomeView 已在 JS 里各自降级；这里兜住 CSS 侧的过渡与动画，
+   包括路由切换 fade、卡片 hover 位移、条形图高度过渡等。 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

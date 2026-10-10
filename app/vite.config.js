@@ -6,5 +6,16 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? '/recast/' : '/',
   plugins: [vue()],
   server: { port: 5273, open: false },
-  build: { outDir: 'dist', emptyOutDir: true },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // 框架依赖单独成 chunk：业务代码更新后用户不必重新下载 vendor
+        manualChunks(id) {
+          if (id.includes('node_modules')) return 'vendor'
+        },
+      },
+    },
+  },
 }))

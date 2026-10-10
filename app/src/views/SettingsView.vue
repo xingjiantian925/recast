@@ -31,7 +31,8 @@ import {
 } from '../model/config'
 import * as vault from '../model/keystore'
 import { candidateAnchors } from '../context/memory'
-import { journalApi } from '../stores/journal'
+import { journal, journalApi } from '../stores/journal'
+import { exportJson, exportMarkdown } from '../stores/exporters'
 import { session } from '../stores/session'
 import { applyTheme, prefs, pronounPair } from '../stores/prefs'
 
@@ -108,6 +109,17 @@ const pronounOptions = computed(() => Object.entries(tm('settings.pronounWords')
 const safetyPoints = computed(() => tm('settings.privacyPoints'))
 const confirming = ref(false)
 const deleted = ref(false)
+
+/* 数据可携带：导出前先落盘当前状态；Key 与基线分数永不进入导出（见 exporters.js） */
+const exported = ref(false)
+const hasEntries = computed(() => journal.entries.length > 0)
+
+function onExport(kind) {
+  if (kind === 'json') exportJson()
+  else exportMarkdown(t)
+  exported.value = true
+  setTimeout(() => (exported.value = false), 2400)
+}
 
 /**
  * 删除本机全部数据：条目、叙事线、草稿、记忆样例、称呼与界面偏好、模型配置，
@@ -306,6 +318,30 @@ function wipeAll() {
         </li>
       </ul>
 
+      <!-- 数据可携带：导出备份 -->
+      <div class="export">
+        <div>
+          <p class="t-eyebrow">{{ t('settings.exportEyebrow') }}</p>
+          <p class="t-caption" style="margin-top: var(--space-2); line-height: 1.75">
+            {{ t('settings.exportNote') }}
+          </p>
+        </div>
+        <div class="row row--wrap" style="margin-top: var(--space-3)">
+          <button class="btn btn-secondary btn-sm" :disabled="!hasEntries" @click="onExport('json')">
+            <Icon name="folder" :size="14" class="btn-icon" />
+            {{ t('settings.exportJson') }}
+          </button>
+          <button class="btn btn-tertiary btn-sm" :disabled="!hasEntries" @click="onExport('md')">
+            <Icon name="file" :size="14" class="btn-icon" />
+            {{ t('settings.exportMd') }}
+          </button>
+          <span v-if="exported" class="tag tag--success">
+            <span class="dot" />{{ t('settings.exportDone') }}
+          </span>
+          <span v-if="!hasEntries" class="t-caption">{{ t('settings.exportEmpty') }}</span>
+        </div>
+      </div>
+
       <div class="row row--wrap" style="margin-top: var(--space-4)">
         <template v-if="!confirming">
           <button class="btn btn-danger" @click="confirming = true">
@@ -338,6 +374,12 @@ function wipeAll() {
   border-radius: var(--radius-md); background: var(--surface);
 }
 .samples__text { margin: 4px 0 0; font-size: 13px; line-height: 1.7; color: var(--muted-foreground); }
+
+.export {
+  margin-top: var(--space-5); padding: var(--space-4);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  background: var(--surface);
+}
 
 .safety { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .safety__item { display: flex; gap: var(--space-3); align-items: flex-start; }

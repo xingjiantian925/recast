@@ -100,6 +100,24 @@ export const journalApi = {
     journal.dose.used[wk] = (journal.dose.used[wk] || 0) + 1
   },
 
+  /**
+   * 单条删除（数据可携带/可撤回的一部分）。
+   * 若删除的是重构条目，同步回退其所属周的剂量计数（下限 0），
+   * 保证"本周已用剂量"与列表内容一致，不因删除产生虚高。
+   */
+  removeEntry(id) {
+    const idx = journal.entries.findIndex((e) => e.id === id)
+    if (idx === -1) return false
+    const [removed] = journal.entries.splice(idx, 1)
+    if (removed.kind === 'recast') {
+      const wk = weekStart(new Date(removed.at))
+      if (journal.dose.used[wk] != null) {
+        journal.dose.used[wk] = Math.max(0, journal.dose.used[wk] - 1)
+      }
+    }
+    return true
+  },
+
   usedThisWeek() {
     return journal.dose.used[weekStart()] || 0
   },

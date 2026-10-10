@@ -42,9 +42,18 @@ function onInput() {
 }
 
 function submit() {
+  if (picked.value === null) return
   if (session.startedAt) session.setElapsed(Date.now() - session.startedAt)
   session.finishWriting()
   router.push(isLow.value ? '/archive' : '/recast')
+}
+
+/* 键盘党捷径：Cmd/Ctrl + Enter 等价于点提交按钮（未选强度时同样不触发） */
+function onKeydown(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault()
+    submit()
+  }
 }
 </script>
 
@@ -81,6 +90,7 @@ function submit() {
           :placeholder="t('quick.textPlaceholder')"
           spellcheck="false"
           @input="onInput"
+          @keydown="onKeydown"
         />
       </div>
     </section>
@@ -169,6 +179,10 @@ function submit() {
       <Icon name="send-horizontal" :size="18" />
       {{ picked === null ? t('quick.submitNeedIntensity') : isLow ? t('quick.submitLow') : t('quick.submit') }}
     </button>
+
+    <p class="t-caption quick__dose-note">
+      <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>Enter</kbd> {{ t('quick.kbdHint') }}
+    </p>
 
     <p class="t-caption quick__dose-note">
       {{ t('quick.doseNote') }}

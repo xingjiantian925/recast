@@ -8,7 +8,7 @@
  * 合规红线（§7）：这里**不显示 RRS-brooding / PHQ-9 的任何轨迹**。
  * 允许展示的只有过程指标（重构次数、通过率、视角轮换）。
  */
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '../components/Icon.vue'
 import { journal } from '../stores/journal'
@@ -19,6 +19,13 @@ import { LENSES, CRITIQUE_CRITERIA } from '../mock/fixtures'
 const { t } = useI18n()
 const entries = computed(() => journal.entries)
 const recastEntries = computed(() => entries.value.filter((e) => e.kind === 'recast'))
+
+/* 条目多了以后按种类过滤：全部 / 重构 / 重评（只影响列表展示，不影响任何统计口径） */
+const FILTERS = ['all', 'recast', 'reappraisal']
+const filter = ref('all')
+const filteredEntries = computed(() =>
+  filter.value === 'all' ? entries.value : entries.value.filter((e) => e.kind === filter.value),
+)
 
 const lensUse = computed(() => {
   const m = {}
@@ -137,10 +144,27 @@ const agencyTrend = computed(() => {
 
       <!-- 条目 -->
       <section style="margin-top: var(--space-6)">
-        <h2 class="t-h3" style="margin-bottom: var(--space-3)">{{ t('narrative.entriesTitle') }}</h2>
+        <div class="row row--between row--wrap" style="margin-bottom: var(--space-3)">
+          <h2 class="t-h3">{{ t('narrative.entriesTitle') }}</h2>
+          <div class="row" style="gap: var(--space-1)" role="group" :aria-label="t('narrative.filterLabel')">
+            <button
+              v-for="f in FILTERS"
+              :key="f"
+              class="chip"
+              :class="{ 'is-on': filter === f }"
+              :aria-pressed="filter === f"
+              @click="filter = f"
+            >
+              {{ t('narrative.filter' + f[0].toUpperCase() + f.slice(1)) }}
+            </button>
+          </div>
+        </div>
+        <p v-if="!filteredEntries.length" class="t-caption" style="margin-bottom: var(--space-3)">
+          {{ t('narrative.filterEmpty') }}
+        </p>
         <div class="stack--sm" style="display: flex; flex-direction: column; gap: var(--space-3)">
           <RouterLink
-            v-for="e in entries"
+            v-for="e in filteredEntries"
             :key="e.id"
             :to="'/narrative/' + e.id"
             class="card card--flat entry entry--link"
@@ -189,6 +213,15 @@ const agencyTrend = computed(() => {
 
 <style scoped>
 .stat { font-family: var(--font-mono); font-size: 28px; margin-top: var(--space-2); }
+
+.chip {
+  padding: 4px var(--space-3); cursor: pointer;
+  border: 1px solid var(--border-default); border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--muted-foreground);
+  font-size: 13px; transition: all .15s;
+}
+.chip:hover { border-color: var(--primary); color: var(--foreground); }
+.chip.is-on { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
 
 .bars { display: flex; gap: var(--space-2); align-items: flex-end; height: 120px; }
 .bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); height: 100%; }

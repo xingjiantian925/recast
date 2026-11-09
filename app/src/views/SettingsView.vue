@@ -33,6 +33,7 @@ import * as vault from '../model/keystore'
 import { candidateAnchors } from '../context/memory'
 import { journal, journalApi } from '../stores/journal'
 import { exportJson, exportMarkdown } from '../stores/exporters'
+import { flywheel, flywheelStats, resetAll as resetFlywheel } from '../stores/flywheel'
 import { session } from '../stores/session'
 import { applyTheme, prefs, pronounPair } from '../stores/prefs'
 
@@ -102,6 +103,9 @@ async function test() {
 /* ── 记忆 ── */
 const samples = computed(() => candidateAnchors())
 
+/* ── 数据飞轮 ── */
+const fwStats = computed(() => flywheelStats.value)
+
 /* ── 称呼 ── */
 const pronounOptions = computed(() => Object.entries(tm('settings.pronounWords')))
 
@@ -130,6 +134,7 @@ function onExport(kind) {
 function wipeAll() {
   journalApi.resetAll()
   session.resetAll()
+  resetFlywheel()
   prefs.pronoun = 'neutral'
   prefs.useMemory = true
   prefs.theme = 'light'
@@ -277,6 +282,32 @@ function wipeAll() {
       <p v-else class="t-caption" style="margin-top: var(--space-2)">
         {{ t('settings.sampleEmpty') }}
       </p>
+    </section>
+
+    <!-- 数据飞轮 -->
+    <section class="card" style="margin-top: var(--space-4)">
+      <div class="card-head">
+        <div>
+          <span class="t-eyebrow">{{ t('settings.flywheelEyebrow') }}</span>
+          <h2 class="t-h4" style="margin-top: var(--space-2)">{{ t('settings.flywheelTitle') }}</h2>
+        </div>
+        <span class="tag" :class="flywheel.enabled ? 'tag--success' : 'tag--neutral'">
+          <span class="dot" />{{ flywheel.enabled ? t('settings.flywheelOn') : t('settings.flywheelOff') }}
+        </span>
+      </div>
+      <p class="t-caption" style="margin-top: var(--space-3); line-height: 1.75">
+        {{ t('settings.flywheelNote') }}
+      </p>
+      <p class="t-caption" style="margin-top: var(--space-2)">
+        {{ t('settings.flywheelCount', { n: fwStats.total, sft: fwStats.sftCount, pairs: fwStats.pairCount }) }}
+      </p>
+      <RouterLink
+        to="/flywheel"
+        class="btn btn-secondary btn-sm"
+        style="margin-top: var(--space-3); display: inline-flex; text-decoration: none"
+      >
+        {{ t('settings.flywheelOpen') }} →
+      </RouterLink>
     </section>
 
     <!-- 称呼 -->

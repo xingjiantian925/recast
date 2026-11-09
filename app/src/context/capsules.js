@@ -68,7 +68,7 @@ export function assembleCapsules(capsules, totalChars) {
 
 /* ══ 改写任务 ══ */
 
-export function buildRewriteContext({ text, lens, guidance, pronoun, anchors = [] }) {
+export function buildRewriteContext({ text, lens, guidance, pronoun, anchors = [], previous = null }) {
   const name = pronounName(pronoun, text)
   const capsules = [
     {
@@ -94,6 +94,19 @@ export function buildRewriteContext({ text, lens, guidance, pronoun, anchors = [
       text: `The entry (first person, unedited):\n"""\n${text}\n"""`,
     },
   ]
+
+  // 重试反馈：把上一稿与被判失败的原因带回去，否则模型很容易在换一句引导语后
+  // 产出与上一稿几乎相同的文字。优先级低于任务/原文，但高于记忆样例。
+  if (previous?.rewrite) {
+    capsules.push({
+      id: 'feedback.previous',
+      kind: 'feedback',
+      role: 'user',
+      priority: 85,
+      truncatable: true,
+      text: feedbackText(previous),
+    })
+  }
 
   if (anchors.length) {
     capsules.push({
@@ -130,11 +143,34 @@ function fillPronoun(template, name) {
 
 function taskText({ lens, guidance, name }) {
   const lines = [
-    'Rewrite this entry now, as a json object with "rewrite" and "warmth".',
+    'Rewrite this entry now, as a json object with "rewrite", "warmth" and "reconstruction".',
     `- Third-person pronoun for the writer: "${name}" (singular).`,
   ]
   if (lens) lines.push(`- Perspective in use: ${lens.name} — ${lens.desc}`)
   if (guidance) lines.push(`- Guiding question (drives the reconstruction, do not answer it literally): ${guidance}`)
+  return lines.join('\n')
+}
+
+/** 上一稿 + 失败原因。只给模型必要信息，不把整套质检结果倒进去。 */
+function feedbackText(previous) {
+  const lines = [
+    'Previous attempt — rejected. Do not repeat it and do not merely rephrase it:',
+    `"""\n${previous.rewrite}\n"""`,
+  ]
+  if (previous.issue) {
+    lines.push(`- It was stopped before the check because: ${previous.issue}.`)
+  }
+  if (Array.isArray(previous.failed) && previous.failed.length) {
+    lines.push('- The checker found these criteria missing:')
+    for (const f of previous.failed) lines.push(`  · ${f.id}${f.why ? ` — ${f.why}` : ''}`)
+  }
+  if (previous.reconstruction?.line) {
+    lines.push(`- Its claimed reconstruction line was: ${previous.reconstruction.line}`)
+  }
+  lines.push(
+    '- In the new attempt, add ONE new sentence that states what the existing facts plainly imply. It must not be a sentence copied from the original, and it must appear verbatim in the rewrite.',
+    '- Fix any first-person drift or language drift.',
+  )
   return lines.join('\n')
 }
 

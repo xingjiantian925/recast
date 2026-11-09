@@ -36,6 +36,7 @@ export default {
       narrative: 'Narrative',
       checkin: 'Check-ins',
       safety: 'Safety & limits',
+      flywheel: 'Flywheel',
       settings: 'Settings',
       support: 'Support & referral',
       github: 'GitHub',
@@ -295,11 +296,13 @@ export default {
         'The rewrite still carries first-person pronouns outside quoted speech. This is the floor, not the bar — retry with another prompting question.',
       length:
         'The rewrite drifted far from the length of the original, which usually means interpretation was added or facts were dropped. Retry with another prompting question.',
+      language:
+        'The rewrite came back in a different language from the original. Retry with another prompting question; the text is kept for comparison.',
     },
     contextTitle: 'Context for this call',
     context: { rewrite: 'Rewrite call', critique: 'Check call' },
     contextBudget: '{used} of {budget} chars used',
-    contextKind: { guard: 'rules', task: 'task', source: 'source', memory: 'memory' },
+    contextKind: { guard: 'rules', task: 'task', source: 'source', memory: 'memory', feedback: 'retry feedback' },
     contextDropped: '{n} capsule(s) left out for budget',
     contextNote:
       'Capsules are assembled by priority under a character budget. The memory samples are exactly the ones listed in settings, and can be turned off there.',
@@ -383,6 +386,14 @@ export default {
     useMemory: 'Use accepted rewrites as style samples',
     sampleTitle: 'Samples currently in use',
     sampleEmpty: 'No samples yet. They appear after your first recast passes the check and is archived.',
+    flywheelEyebrow: 'Training data',
+    flywheelTitle: 'Local data flywheel',
+    flywheelNote:
+      'Turn your own recasts into samples for a tiny offline model. Off by default; nothing is uploaded, and the samples can be exported or deleted at any time.',
+    flywheelOpen: 'Open the flywheel',
+    flywheelOn: 'Collecting',
+    flywheelOff: 'Not collecting',
+    flywheelCount: '{n} attempts · {sft} SFT · {pairs} preference pairs',
     pronounEyebrow: 'Address',
     pronounTitle: 'Third-person pronoun',
     pronounNote: 'How the rewrite refers to you.',
@@ -888,6 +899,68 @@ By the end, the pronoun had changed but the understanding had not — so this on
 
 This time TA went one step further: separating "what happened" from "what kind of person TA is". The event had its understandable reasons, but that does not mean TA is the problem. Next, TA turned attention back to one concrete thing that can be done.`,
     warmWrap: `(Demo · warmth layer) What TA feels right now is real. It does not need to be erased, and it does not need to be judged. Anyone in that position would hurt — this is not TA's personal weakness. TA did their best, and that effort was not rejected.`,
+  },
+
+  flywheel: {
+    eyebrow: 'Local data flywheel',
+    title: 'Turn your own recasts into a tiny offline model',
+    lede: 'Every attempt on this device can be kept as training data for a much smaller model that runs on the phone. Nothing is uploaded.',
+    toggleTitle: 'Collect training samples on this device',
+    toggleLabel: 'I understand these samples stay in this browser until I export or delete them',
+    toggleNote:
+      'Off by default. When on, each recast attempt is stored locally together with the rewrite, the check result and your decision (retried, archived, abandoned). No network request is made, and no API key is stored in the samples.',
+    stateOn: 'On',
+    stateOff: 'Off',
+    statsEyebrow: 'What the flywheel holds',
+    statTotal: 'Attempts',
+    statSft: 'SFT pairs',
+    statPairs: 'Preference pairs',
+    statPassed: 'Passed checks',
+    byLang: 'By language',
+    byLens: 'By perspective',
+    byCriterion: 'Reconstruction moves seen',
+    lastAt: 'Latest sample',
+    empty:
+      'No samples yet. Turn this on, then run a recast with your own model key. Demo-mode attempts are recorded for flow testing but never exported into training sets.',
+    pendingNote:
+      '{n} attempts have no decision yet. They stay neutral until you retry, archive or abandon them.',
+    demoNote:
+      'Demo-mode attempts are recorded so the flow can be checked, but they are excluded from SFT and preference-pair exports.',
+    exportEyebrow: 'Export for training',
+    exportTitle: 'JSONL files, built from your decisions',
+    exportNote:
+      'SFT uses only real-model attempts that passed the check and were archived by you. Preference pairs use adjacent attempts on the same entry: the later passing rewrite as chosen, the earlier blocked one as rejected. Raw exports everything.',
+    redact: 'Redact emails, phone numbers, URLs and long ID-like numbers on export',
+    exportSft: 'Export SFT',
+    exportPairs: 'Export preference pairs',
+    exportRaw: 'Export raw events',
+    kind: { sft: 'SFT', pairs: 'preference pairs', raw: 'raw events' },
+    exported: '{kind} downloaded',
+    noData: 'There is nothing to export yet.',
+    privacyEyebrow: 'Boundaries',
+    privacy: [
+      {
+        title: 'Local only',
+        body: 'Samples are written to this browser storage. The app never posts them to a server of ours.',
+      },
+      {
+        title: 'You decide the label',
+        body: 'Retry, archive and abandonment are the labels. The flywheel does not silently infer how you felt.',
+      },
+      {
+        title: 'No keys, no scores',
+        body: 'API keys, base URLs, scale scores and check-in records are never included in any export.',
+      },
+      {
+        title: 'Delete is delete',
+        body: 'Clearing the flywheel removes the samples from this device immediately. Turning the switch off only stops new samples.',
+      },
+    ],
+    clear: 'Delete training data',
+    clearConfirm: 'Delete all locally collected training samples? This cannot be undone.',
+    clearYes: 'Delete',
+    clearNo: 'Cancel',
+    cleared: 'Training data deleted',
   },
 
   evidence: {

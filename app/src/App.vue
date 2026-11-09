@@ -17,6 +17,7 @@ const nav = [
   { to: '/narrative', key: 'narrative' },
   { to: '/checkin', key: 'checkin' },
   { to: '/safety', key: 'safety' },
+  { to: '/flywheel', key: 'flywheel' },
   { to: '/settings', key: 'settings' },
 ]
 
@@ -239,5 +240,13 @@ const statusTag = computed(() => {
 .model-status:hover { filter: brightness(.95); }
 @media (max-width: 720px) {
   .model-status__text { display: none; }
+}
+
+/* 窄屏顶栏：导航从 5 项变 6 项后，960 宽度下会折行并出现横向滚动。
+   收窄间距与字号、隐藏品牌副标，保证一行放得下（真正的移动端布局另做）。 */
+@media (max-width: 1120px) {
+  .topbar { gap: var(--space-2); padding: 0 var(--space-3); }
+  .topbar .logo em { display: none; }
+  .nav-item { padding: 0 var(--space-2); font-size: 12.5px; white-space: nowrap; }
 }
 </style>

@@ -23,6 +23,7 @@ import { engineMode, PASS_EVIDENCE, FAIL_EVIDENCE } from '../engine'
 import { modelConfig } from '../model/config'
 import { session } from '../stores/session'
 import { journalApi } from '../stores/journal'
+import { markDecision } from '../stores/flywheel'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -84,7 +85,9 @@ async function run() {
 }
 
 async function retry() {
-  // 换引导语重试——这是 Step 5 的明确要求
+  // 换引导语重试——这是 Step 5 的明确要求。
+  // 先给本次尝试打「被重试」标签，飞轮才能把这一稿当作偏好对里的 rejected。
+  markDecision(result.value?.flywheelId, 'retried')
   promptIndex.value = (promptIndex.value + 1) % RECONSTRUE_PROMPTS.value.length
   await session.runEngine({ guidance: guidanceText.value })
 }
@@ -102,6 +105,7 @@ function save() {
     router.push('/archive')
     return
   }
+  markDecision(result.value?.flywheelId, 'accepted')
   journalApi.archive({
     text: session.text,
     rewrite: result.value.distanced, // 记忆层的风格样例来源（只存通过质检的）
@@ -117,6 +121,7 @@ function save() {
 }
 
 function toSupport() {
+  markDecision(result.value?.flywheelId, 'exhausted')
   session.stabilize('critique-exhausted')
   router.push('/support')
 }

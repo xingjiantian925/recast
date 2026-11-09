@@ -2,6 +2,7 @@ import { reactive, watch } from 'vue'
 // 只从 domain 静态导入：engine 门面会经 remote → memory → journal 回到本模块，
 // 静态导入会形成环；门面本身在 runEngine 里用动态 import 取。
 import { routeByIntensity, TIER_KEYS } from '../engine/domain'
+import { recordAttempt } from './flywheel'
 
 /**
  * session.js — 一次书写会话的状态机
@@ -142,16 +143,32 @@ export const session = reactive({
     this.busy = true
     this.error = null
     const nextAttempt = this.attempt + 1
+    // 重试反馈：上一稿 + 未命中的判据。只传必要字段，不把整份结果倒进提示词。
+    const previous = buildPreviousFeedback(this.result)
+    const prevId = this.result?.flywheelId || null
     try {
       const { runRecast } = await import('../engine')
-      this.result = await runRecast({
+      const result = await runRecast({
         text: this.text,
         intensity: this.intensity,
         band: this.band,
         lens: this.lens,
         attempt: nextAttempt,
         guidance,
+        previous,
       })
+      // 飞轮关闭时返回 null，不产生任何本地写入
+      const flywheelId = recordAttempt({
+        text: this.text,
+        intensity: this.intensity,
+        band: this.band,
+        lens: this.lens,
+        guidance,
+        attempt: nextAttempt,
+        prevId,
+        result,
+      })
+      this.result = flywheelId ? { ...result, flywheelId } : result
       this.attempt = nextAttempt
     } catch (err) {
       // 模型层错误收敛为 code；未知错误按服务端错误处理
@@ -230,6 +247,22 @@ watch(
   },
   { deep: true },
 )
+
+/**
+ * 重试时带给改写模型的上一稿摘要。
+ * 只在上一稿确实未通过时生成——通过的稿件不应出现在「rejected」反馈里。
+ */
+function buildPreviousFeedback(result) {
+  if (!result?.distanced || !result?.critique || result.critique.passed) return null
+  return {
+    rewrite: result.distanced,
+    issue: result.critique.issue || '',
+    failed: (result.critique.findings || [])
+      .filter((f) => !f.hit)
+      .map((f) => ({ id: f.id, why: f.why || '' })),
+    reconstruction: result.reconstruction || null,
+  }
+}
 
 export { weekStart }
 

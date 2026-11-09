@@ -13,7 +13,8 @@ import { LENSES } from '../mock/fixtures'
  *     避免形成任何可传播的分数轨迹文件。
  */
 
-function download(filename, mime, content) {
+/** 通用下载：exporters 与 flywheel 共用（飞轮导出同样不经过任何服务器） */
+export function downloadFile(filename, mime, content) {
   const blob = new Blob([content], { type: `${mime};charset=utf-8` })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -39,7 +40,7 @@ export function exportJson() {
     checkins: journal.checkins,
     dose: journal.dose,
   }
-  download(`recast-export-${stamp()}.json`, 'application/json', JSON.stringify(payload, null, 2))
+  downloadFile(`recast-export-${stamp()}.json`, 'application/json', JSON.stringify(payload, null, 2))
 }
 
 /** Markdown：人类可读的叙事摘要 */
@@ -69,5 +70,5 @@ export function exportMarkdown(t) {
       lines.push(t('settings.exportMdSample'), '', e.sample, '')
     }
   }
-  download(`recast-export-${stamp()}.md`, 'text/markdown', lines.join('\n'))
+  downloadFile(`recast-export-${stamp()}.md`, 'text/markdown', lines.join('\n'))
 }

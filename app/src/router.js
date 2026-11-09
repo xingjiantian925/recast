@@ -26,6 +26,7 @@ const routes = [
   { path: '/checkin', name: 'checkin', component: () => import('./views/CheckinView.vue'), meta: { step: 'Step 10' } },
   { path: '/safety', name: 'safety', component: () => import('./views/SafetyView.vue'), meta: { step: 'Step 10' } },
   { path: '/settings', name: 'settings', component: () => import('./views/SettingsView.vue') },
+  { path: '/flywheel', name: 'flywheel', component: () => import('./views/FlywheelView.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 

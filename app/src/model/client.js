@@ -64,6 +64,7 @@ export async function chatCompletion({
   messages,
   json = false,
   maxTokens,
+  temperature,
   timeoutMs = DEFAULT_TIMEOUT_MS,
   requireContent = true,
 }) {
@@ -84,6 +85,7 @@ export async function chatCompletion({
           stream: false,
           ...(json ? { response_format: { type: 'json_object' } } : {}),
           ...(maxTokens ? { max_tokens: maxTokens } : {}),
+          ...(typeof temperature === 'number' ? { temperature } : {}),
           ...(isDeepSeek(baseUrl) ? { thinking: { type: 'disabled' } } : {}),
         }),
         signal: controller.signal,

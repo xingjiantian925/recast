@@ -20,8 +20,9 @@ export const engineMode = computed(() => (hasApiKey.value ? 'model' : 'demo'))
 
 /**
  * 一次改写（含质检）。参数契约：
- * @param {{ text: string, intensity: number, band: 'high'|'mid'|'low', lens: string, attempt: number, guidance?: string }} params
- * @returns {Promise<{ distanced: string, warmth: string, critique: object, contextReport: object|null, engine: 'model'|'demo' }>}
+ * @param {{ text: string, intensity: number, band: 'high'|'mid'|'low', lens: string, attempt: number, guidance?: string, previous?: object|null }} params
+ *   previous = 上一稿 + 未命中的判据（session 装配），只用于重试反馈
+ * @returns {Promise<{ distanced: string, warmth: string, critique: object, quality?: object, reconstruction?: object, contextReport: object|null, engine: 'model'|'demo' }>}
  */
 export function runRecast(params) {
   return engineMode.value === 'model' ? runRemoteRecast(params) : runStubRecast(params)
